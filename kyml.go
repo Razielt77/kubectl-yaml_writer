@@ -1,4 +1,6 @@
 package main
+// use the command below to build it before packaging it in a docker container
+// CGO_ENABLED=0 GOOS=linux go build -a -tags netgo -ldflags '-w' .
 
 import (
 	"flag"
@@ -11,14 +13,12 @@ import (
 	"regexp"
 )
 
-type Metadata struct {
-	Name 			string `yaml:"name"`
-}
-
 type Deployment struct {
 	ApiVersion 		string `yaml:"apiVersion"`
 	Kind			string `yaml:"kind"`
-	Meta 			Metadata `yaml:"metadata"`
+	Meta 			struct{
+		Name 		string `yaml:"name"`
+	} `yaml:"metadata"`
 	Spec			struct{
 		Template 	struct{
 			Spec	struct{
@@ -43,8 +43,8 @@ func main() {
 
 	if len(os.Args) < 2{
 		fmt.Print("No command specified.\nCurrently supported commands:\nUpdate - Search for kubernetes entity and update its attributes\n")
+		os.Exit(1)
 	}
-
 	switch os.Args[1]{
 	case "update":
 		updateCommand.Parse(os.Args[2:])
