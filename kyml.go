@@ -13,26 +13,8 @@ import (
 	"regexp"
 )
 
-type Deployment struct {
-	ApiVersion 		string `yaml:"apiVersion"`
-	Kind			string `yaml:"kind"`
-	Meta 			struct{
-		Name 		string `yaml:"name"`
-	} `yaml:"metadata"`
-	Spec			struct{
-		Template 	struct{
-			Spec	struct{
-				Containers []struct{
-					Image			string `yaml:"image"`
-				}`yaml:"containers"`
-			} `yaml:"spec"`
-		} `yaml:"template"`
-	} `yaml:"spec"`
-}
-
 
 func main() {
-
 
 	fmt.Println("Hello Kyml!")
 	updateCommand := flag.NewFlagSet("update", flag.ExitOnError)
@@ -40,6 +22,7 @@ func main() {
 	txtName := updateCommand.String("name","","Name of the resource to update. (Required)")
 	txtAtt := updateCommand.String("att","","Name of the attribute to update. (Required)")
 	txtVal := updateCommand.String("value","","Desired value of the attribute to update. (Required)")
+	intIndex := updateCommand.Int("index",0,"In case attribute is in array, use index to specify the array index. (Optional)")
 
 	if len(os.Args) < 2{
 		fmt.Print("No command specified.\nCurrently supported commands:\nUpdate - Search for kubernetes entity and update its attributes\n")
@@ -58,7 +41,7 @@ func main() {
 			os.Exit(1)
 		}
 		txtContext:= Tail[0]
-		update(txtContext,*txtKind,*txtName,*txtAtt,*txtVal)
+		update(txtContext,*txtKind,*txtName,*txtAtt,*txtVal,*intIndex)
 	default:
 		flag.PrintDefaults()
 		os.Exit(1)
@@ -66,7 +49,7 @@ func main() {
 
 }
 
-func update(txtContext, txtKind,txtName,txtAtt,txtVal string) error {
+func update(txtContext, txtKind,txtName,txtAtt,txtVal string, intIndex int) error {
 
 	err := filepath.Walk(txtContext, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
@@ -74,14 +57,12 @@ func update(txtContext, txtKind,txtName,txtAtt,txtVal string) error {
 		}
 		matched, _ := regexp.MatchString(`\.yaml$`, path)
 		if matched{
-			fmt.Printf("File found: %s\n",path)
+			yamlFile, err := ioutil.ReadFile(path)
+			if err != nil {
+				log.Printf("yamlFile.Get err   #%v ", err)
+			}
 			if txtKind == "deployment"{
 				var deployment Deployment
-				yamlFile, err := ioutil.ReadFile(path)
-				if err != nil {
-					log.Printf("yamlFile.Get err   #%v ", err)
-				}
-
 				err = yaml.Unmarshal([]byte(yamlFile), &deployment)
 				if err != nil {
 					log.Fatalf("Unmarshal: %v", err)
@@ -89,9 +70,32 @@ func update(txtContext, txtKind,txtName,txtAtt,txtVal string) error {
 				if deployment.Meta.Name == txtName{
 
 					if txtAtt == "image"{
-						fmt.Printf("Updating resource of kind: %s\tNamed: %s\tImage:%s ==> %s\n",deployment.Kind,deployment.Meta.Name,deployment.Spec.Template.Spec.Containers[0].Image,txtVal)
-						deployment.Spec.Template.Spec.Containers[0].Image = txtVal
+						fmt.Printf("Updating resource of kind: %s\tNamed: %s\tImage:%s ==> %s\n",deployment.Kind,deployment.Meta.Name,deployment.Spec.Template.Spec.Containers[intIndex].Image,txtVal)
+						deployment.Spec.Template.Spec.Containers[intIndex].Image = txtVal
 						data, err := yaml.Marshal(&deployment)
+						if err != nil {
+							log.Fatalf("error: %v", err)
+						}
+						err = ioutil.WriteFile(path, data, 0644)
+						if err != nil {
+							log.Fatal(err)
+						}
+					}
+				}
+
+			}
+			if txtKind == "rollout"{
+				var rollout Rollout
+				err = yaml.Unmarshal([]byte(yamlFile), &rollout)
+				if err != nil {
+					log.Fatalf("Unmarshal: %v", err)
+				}
+				if rollout.Meta.Name == txtName{
+
+					if txtAtt == "image"{
+						fmt.Printf("Updating resource of kind: %s\tNamed: %s\tImage:%s ==> %s\n",rollout.Kind,rollout.Meta.Name,rollout.Spec.Template.Spec.Containers[intIndex].Image,txtVal)
+						rollout.Spec.Template.Spec.Containers[intIndex].Image = txtVal
+						data, err := yaml.Marshal(&rollout)
 						if err != nil {
 							log.Fatalf("error: %v", err)
 						}
