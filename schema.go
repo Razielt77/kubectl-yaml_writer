@@ -1,7 +1,5 @@
 package main
 
-import "k8s.io/apimachinery/pkg/util/intstr"
-
 type BaseInfo struct {
 	ApiVersion 		string `yaml:"apiVersion"`
 	Kind			string `yaml:"kind"`
@@ -36,7 +34,7 @@ type Deployment struct {
 				}`yaml:"containers"`
 			} `yaml:"spec"`
 		} `yaml:"template"`
-		MinReadySeconds		int `yaml:"minReadySeconds"`
+		MinReadySeconds		int `yaml:"minReadySeconds,omitempty"`
 	} `yaml:"spec"`
 }
 
@@ -69,7 +67,7 @@ type Rollout struct {
 		MinReadySeconds		int `yaml:"minReadySeconds,omitempty"`
 		Strategy 		struct{
 			Canary		struct{
-				Steps []map[string]string `json:"steps,omitempty"`
+				Steps []CanaryStep `yaml:"steps,omitempty"`
 			}`yaml:"canary,omitempty"`
 		}`yaml:"strategy"`
 	} `yaml:"spec"`
@@ -77,15 +75,15 @@ type Rollout struct {
 
 type CanaryStep struct {
 	// SetWeight sets what percentage of the newRS should receive
-	SetWeight *int32 `json:"setWeight,omitempty"`
+	SetWeight *int32 `yaml:"setWeight,omitempty"`
 	// Pause freezes the rollout by setting spec.Paused to true.
 	// A Rollout will resume when spec.Paused is reset to false.
 	// +optional
-	Pause RolloutPause `json:"pause,omitempty"`
+	Pause string `yaml:"pause,omitempty"`
 }
 
 type RolloutPause struct {
 	// Duration the amount of time to wait before moving to the next step.
 	// +optional
-	Duration *intstr.IntOrString `json:"duration,omitempty"`
+	Duration int `yaml:"duration,omitempty"`
 }

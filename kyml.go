@@ -5,13 +5,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/argoproj/argo-rollouts/pkg/apis/rollouts/v1alpha1"
-	"github.com/ghodss/yaml"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	appsv1 "k8s.io/api/apps/v1"
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	k8sruntime "k8s.io/apimachinery/pkg/runtime"
 	"log"
 	"os"
 	"path/filepath"
@@ -96,11 +91,13 @@ func update(txtContext, txtKind,txtName,txtAtt,txtVal string, intIndex int) erro
 						}
 					}
 				case "rollout":
-					var ro v1alpha1.Rollout
+					fmt.Println("before unmarshal")
+					/*var ro v1alpha1.Rollout
 					err = yaml.UnmarshalStrict([]byte(yamlFile), &ro, yaml.DisallowUnknownFields)
 					if err != nil {
 						panic(err)
 					}
+					fmt.Println("after unmarshal")
 					if txtAtt == "image"{
 						fmt.Printf("Updating resource of kind: %s\tNamed: %s\tImage:%s ==> %s\n",ro.Kind,ro.GetName(),ro.Spec.Template.Spec.Containers[intIndex].Image,txtVal)
 						ro.Spec.Template.Spec.Containers[intIndex].Image = txtVal
@@ -112,8 +109,8 @@ func update(txtContext, txtKind,txtName,txtAtt,txtVal string, intIndex int) erro
 						if err != nil {
 							log.Fatal(err)
 						}
-					}
-					/*var rollout Rollout
+					}*/
+					var rollout Rollout
 					err = yaml.Unmarshal([]byte(yamlFile), &rollout)
 					if err != nil {
 						log.Fatalf("Unmarshal: %v", err)
@@ -129,7 +126,7 @@ func update(txtContext, txtKind,txtName,txtAtt,txtVal string, intIndex int) erro
 						if err != nil {
 							log.Fatal(err)
 						}
-					}*/
+					}
 				default:
 					fmt.Printf("Kind %s is not supported yet\n",txtKind)
 					os.Exit(1)
