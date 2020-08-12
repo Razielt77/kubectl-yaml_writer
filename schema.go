@@ -79,11 +79,11 @@ type CanaryStep struct {
 	// Pause freezes the rollout by setting spec.Paused to true.
 	// A Rollout will resume when spec.Paused is reset to false.
 	// +optional
-	Pause string `yaml:"pause,omitempty"`
+	Pause *RolloutPause `yaml:"pause,omitempty"`
 }
 
 type RolloutPause struct {
 	// Duration the amount of time to wait before moving to the next step.
 	// +optional
-	Duration int `yaml:"duration,omitempty"`
+	Duration *int `yaml:"duration,omitempty"`
 }

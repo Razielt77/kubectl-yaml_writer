@@ -91,25 +91,7 @@ func update(txtContext, txtKind,txtName,txtAtt,txtVal string, intIndex int) erro
 						}
 					}
 				case "rollout":
-					fmt.Println("before unmarshal")
-					/*var ro v1alpha1.Rollout
-					err = yaml.UnmarshalStrict([]byte(yamlFile), &ro, yaml.DisallowUnknownFields)
-					if err != nil {
-						panic(err)
-					}
-					fmt.Println("after unmarshal")
-					if txtAtt == "image"{
-						fmt.Printf("Updating resource of kind: %s\tNamed: %s\tImage:%s ==> %s\n",ro.Kind,ro.GetName(),ro.Spec.Template.Spec.Containers[intIndex].Image,txtVal)
-						ro.Spec.Template.Spec.Containers[intIndex].Image = txtVal
-						data, err := yaml.Marshal(&ro)
-						if err != nil {
-							log.Fatalf("error: %v", err)
-						}
-						err = ioutil.WriteFile(path, data, 0644)
-						if err != nil {
-							log.Fatal(err)
-						}
-					}*/
+
 					var rollout Rollout
 					err = yaml.Unmarshal([]byte(yamlFile), &rollout)
 					if err != nil {
