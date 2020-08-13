@@ -12,7 +12,7 @@ metadata:
     - deployment
   icon:
     type: svg
-    url: https://raw.githubusercontent.com/Razielt77/kyml/master/argo.svg
+    url: https://raw.githubusercontent.com/Razielt77/kyml/master/kyml.svg
     background: "#ffffff"
   maintainers:
     - name: Raziel Tabib
