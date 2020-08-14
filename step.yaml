@@ -66,3 +66,4 @@ spec:
       image: "docker.io/razielt/kyml:0.1"
       commands:
         - kyml update -kind ${{KIND}} -name ${{NAME}} -att ${{ATT}} -value ${{VALUE}} .
+        - echo SKIP_PUSH=$? >> /meta/env_vars_to_export

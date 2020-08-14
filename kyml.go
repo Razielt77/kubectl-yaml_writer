@@ -31,6 +31,7 @@ func main() {
 	}
 	switch os.Args[1]{
 	case "update":
+
 		updateCommand.Parse(os.Args[2:])
 		Tail := updateCommand.Args()
 		if *txtName == "" || *txtKind ==""{
@@ -44,6 +45,7 @@ func main() {
 		txtContext:= Tail[0]
 		update(txtContext,*txtKind,*txtName,*txtAtt,*txtVal,*intIndex)
 	default:
+		fmt.Printf("No command specified.")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
@@ -79,6 +81,10 @@ func update(txtContext, txtKind,txtName,txtAtt,txtVal string, intIndex int) erro
 						log.Fatalf("Unmarshal: %v", err)
 					}
 					if txtAtt == "image"{
+						if deployment.Spec.Template.Spec.Containers[intIndex].Image == txtVal{
+							fmt.Println("Nothing to update. Value already set.")
+							os.Exit(1)
+						}
 						fmt.Printf("Updating resource of kind: %s\tNamed: %s\tImage:%s ==> %s\n",deployment.Kind,deployment.Meta.Name,deployment.Spec.Template.Spec.Containers[intIndex].Image,txtVal)
 						deployment.Spec.Template.Spec.Containers[intIndex].Image = txtVal
 						data, err := yaml.Marshal(&deployment)
@@ -98,6 +104,10 @@ func update(txtContext, txtKind,txtName,txtAtt,txtVal string, intIndex int) erro
 						log.Fatalf("Unmarshal: %v", err)
 					}
 					if txtAtt == "image"{
+						if rollout.Spec.Template.Spec.Containers[intIndex].Image == txtVal{
+							fmt.Println("Nothing to update. Value already set.")
+							os.Exit(1)
+						}
 						fmt.Printf("Updating resource of kind: %s\tNamed: %s\tImage:%s ==> %s\n",rollout.Kind,rollout.Meta.Name,rollout.Spec.Template.Spec.Containers[intIndex].Image,txtVal)
 						rollout.Spec.Template.Spec.Containers[intIndex].Image = txtVal
 						data, err := yaml.Marshal(&rollout)
