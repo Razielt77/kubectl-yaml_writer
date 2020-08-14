@@ -60,10 +60,29 @@ spec:
           }
       }
     }
+  returns: |-
+    {
+        "definitions": {},
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "additionalProperties": true,
+        "patterns": [],
+        "required": [
+          "COMMIT_REQUIRED"
+        ]
+        ,
+        "properties": {
+            "COMMIT_REQUIRED": {
+                "type": "string",
+                "description": "true/false = indicates whether any file was changed and hence commit is needed"
+            }
+        }
+    }
   steps:
     runKyml:
       title: "Run Kyml"
       image: "docker.io/razielt/kyml:0.1"
       commands:
-        - kyml update -kind ${{KIND}} -name ${{NAME}} -att ${{ATT}} -value ${{VALUE}} .
-        - echo SKIP_PUSH=$? >> /meta/env_vars_to_export
+        - kyml update -o -kind ${{KIND}} -name ${{NAME}} -att ${{ATT}} -value ${{VALUE}} .
+        - COMMIT_REQUIRED=`cat is_updated.txt`
+        - echo COMMIT_REQUIRED=$COMMIT_REQUIRED >> /meta/env_vars_to_export

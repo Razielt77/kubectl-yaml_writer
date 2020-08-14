@@ -24,6 +24,7 @@ func main() {
 	txtAtt := updateCommand.String("att","","Name of the attribute to update. (Required)")
 	txtVal := updateCommand.String("value","","Desired value of the attribute to update. (Required)")
 	intIndex := updateCommand.Int("index",0,"In case attribute is in array, use index to specify the array index. (Optional)")
+	boolOutput := updateCommand.Bool("o",false,"set to true will have kyml create a file named: is_updated with true/false to indicate if attribute was updated or not. (Optional)")
 
 	if len(os.Args) < 2{
 		fmt.Print("No command specified.\nCurrently supported commands:\nUpdate - Search for kubernetes entity and update its attributes\n")
@@ -43,7 +44,7 @@ func main() {
 			os.Exit(1)
 		}
 		txtContext:= Tail[0]
-		update(txtContext,*txtKind,*txtName,*txtAtt,*txtVal,*intIndex)
+		update(txtContext,*txtKind,*txtName,*txtAtt,*txtVal,*intIndex,*boolOutput)
 	default:
 		fmt.Printf("No command specified.")
 		flag.PrintDefaults()
@@ -52,7 +53,7 @@ func main() {
 
 }
 
-func update(txtContext, txtKind,txtName,txtAtt,txtVal string, intIndex int) error {
+func update(txtContext, txtKind,txtName,txtAtt,txtVal string, intIndex int, output bool) error {
 
 	err := filepath.Walk(txtContext, func(path string, info os.FileInfo, err error) error {
 		//fmt.Println(path)
@@ -83,18 +84,25 @@ func update(txtContext, txtKind,txtName,txtAtt,txtVal string, intIndex int) erro
 					if txtAtt == "image"{
 						if deployment.Spec.Template.Spec.Containers[intIndex].Image == txtVal{
 							fmt.Println("Nothing to update. Value already set.")
-							os.Exit(1)
+							if output==true{
+								ioutil.WriteFile("is_updated.txt",[]byte("false"),0644)
+							}
+						}else{
+							fmt.Printf("Updating resource of kind: %s\tNamed: %s\tImage:%s ==> %s\n",deployment.Kind,deployment.Meta.Name,deployment.Spec.Template.Spec.Containers[intIndex].Image,txtVal)
+							deployment.Spec.Template.Spec.Containers[intIndex].Image = txtVal
+							data, err := yaml.Marshal(&deployment)
+							if err != nil {
+								log.Fatalf("error: %v", err)
+							}
+							err = ioutil.WriteFile(path, data, 0644)
+							if err != nil {
+								log.Fatal(err)
+							}
+							if output==true{
+								ioutil.WriteFile("is_updated.txt",[]byte("true"),0644)
+							}
 						}
-						fmt.Printf("Updating resource of kind: %s\tNamed: %s\tImage:%s ==> %s\n",deployment.Kind,deployment.Meta.Name,deployment.Spec.Template.Spec.Containers[intIndex].Image,txtVal)
-						deployment.Spec.Template.Spec.Containers[intIndex].Image = txtVal
-						data, err := yaml.Marshal(&deployment)
-						if err != nil {
-							log.Fatalf("error: %v", err)
-						}
-						err = ioutil.WriteFile(path, data, 0644)
-						if err != nil {
-							log.Fatal(err)
-						}
+
 					}
 				case "rollout":
 
@@ -106,18 +114,25 @@ func update(txtContext, txtKind,txtName,txtAtt,txtVal string, intIndex int) erro
 					if txtAtt == "image"{
 						if rollout.Spec.Template.Spec.Containers[intIndex].Image == txtVal{
 							fmt.Println("Nothing to update. Value already set.")
-							os.Exit(1)
+							if output==true{
+								ioutil.WriteFile("is_updated.txt",[]byte("false"),0644)
+							}
+						}else{
+							fmt.Printf("Updating resource of kind: %s\tNamed: %s\tImage:%s ==> %s\n",rollout.Kind,rollout.Meta.Name,rollout.Spec.Template.Spec.Containers[intIndex].Image,txtVal)
+							rollout.Spec.Template.Spec.Containers[intIndex].Image = txtVal
+							data, err := yaml.Marshal(&rollout)
+							if err != nil {
+								log.Fatalf("error: %v", err)
+							}
+							err = ioutil.WriteFile(path, data, 0644)
+							if err != nil {
+								log.Fatal(err)
+							}
+							if output==true{
+								ioutil.WriteFile("is_updated.txt",[]byte("true"),0644)
+							}
 						}
-						fmt.Printf("Updating resource of kind: %s\tNamed: %s\tImage:%s ==> %s\n",rollout.Kind,rollout.Meta.Name,rollout.Spec.Template.Spec.Containers[intIndex].Image,txtVal)
-						rollout.Spec.Template.Spec.Containers[intIndex].Image = txtVal
-						data, err := yaml.Marshal(&rollout)
-						if err != nil {
-							log.Fatalf("error: %v", err)
-						}
-						err = ioutil.WriteFile(path, data, 0644)
-						if err != nil {
-							log.Fatal(err)
-						}
+
 					}
 				default:
 					fmt.Printf("Kind %s is not supported yet\n",txtKind)
