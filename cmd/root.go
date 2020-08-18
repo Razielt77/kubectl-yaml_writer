@@ -9,8 +9,7 @@ var rootCmdOptions struct {
 }
 
 var rootCmd = &cobra.Command{
-	Use:  "sync",
-	Long: "Sync data from sources to targets",
+	Use: "kyml",
 }
 
 // Execute - execute the root command

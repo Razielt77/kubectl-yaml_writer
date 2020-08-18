@@ -24,8 +24,7 @@ var (
 )
 
 var updateCmd = &cobra.Command{
-	Use:  "update",
-	Long: "Start to sync",
+	Use: "update",
 	Run: func(cmd *cobra.Command, args []string) {
 		err := update(updateCmdOptions.file, updateCmdOptions.kind, updateCmdOptions.name, updateCmdOptions.attribute, updateCmdOptions.value, updateCmdOptions.index)
 		dieOnError("Failed to update", err)
