@@ -1,19 +1,28 @@
 package cmd
 
+type MetaData  struct {
+	Name string `yaml:"name"`
+	Labels map[string]string `yaml:"labels,omitempty"`
+}
+
+type Container struct {
+	Image string `yaml:"image"`
+	Name  string `yaml:"name"`
+	Ports []struct {
+		ContainerPort int `yaml:"containerPort"`
+	} `yaml:"ports"`
+}
+
 type BaseInfo struct {
 	ApiVersion string `yaml:"apiVersion"`
 	Kind       string `yaml:"kind"`
-	Meta       struct {
-		Name string `yaml:"name"`
-	} `yaml:"metadata"`
+	Meta       MetaData `yaml:"metadata,omitempty"`
 }
 
 type Deployment struct {
 	ApiVersion string `yaml:"apiVersion"`
 	Kind       string `yaml:"kind"`
-	Meta       struct {
-		Name string `yaml:"name"`
-	} `yaml:"metadata"`
+	Meta       MetaData `yaml:"metadata,omitempty"`
 	Spec struct {
 		Replicas             int `yaml:"replicas"`
 		RevisionHistoryLimit int `yaml:"revisionHistoryLimit"`
@@ -25,13 +34,7 @@ type Deployment struct {
 				Labels map[string]string `yaml:"labels"`
 			} `yaml:"metadata"`
 			Spec struct {
-				Containers []struct {
-					Image string `yaml:"image"`
-					Name  string `yaml:"name"`
-					Ports []struct {
-						ContainerPort int `yaml:"containerPort"`
-					} `yaml:"ports"`
-				} `yaml:"containers"`
+				Containers []Container `yaml:"containers,omitempty"`
 			} `yaml:"spec"`
 		} `yaml:"template"`
 		MinReadySeconds int `yaml:"minReadySeconds,omitempty"`
@@ -41,9 +44,7 @@ type Deployment struct {
 type Rollout struct {
 	ApiVersion string `yaml:"apiVersion"`
 	Kind       string `yaml:"kind"`
-	Meta       struct {
-		Name string `yaml:"name"`
-	} `yaml:"metadata"`
+	Meta       MetaData `yaml:"metadata",omitempty`
 	Spec struct {
 		Replicas             int `yaml:"replicas"`
 		RevisionHistoryLimit int `yaml:"revisionHistoryLimit"`
@@ -55,13 +56,7 @@ type Rollout struct {
 				Labels map[string]string `yaml:"labels"`
 			} `yaml:"metadata"`
 			Spec struct {
-				Containers []struct {
-					Image string `yaml:"image"`
-					Name  string `yaml:"name"`
-					Ports []struct {
-						ContainerPort int `yaml:"containerPort"`
-					} `yaml:"ports"`
-				} `yaml:"containers"`
+				Containers []Container `yaml:"containers,omitempty"`
 			} `yaml:"spec"`
 		} `yaml:"template"`
 		MinReadySeconds int `yaml:"minReadySeconds,omitempty"`

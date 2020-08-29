@@ -14,8 +14,6 @@ import (
 
 var (
 	updateCmdOptions struct {
-		//path      string
-		//kind      string
 		name      string
 		attribute string
 		value     string
@@ -72,6 +70,9 @@ func update(kind, directory string) error {
 		if !resourceMatched {
 			return nil
 		}
+
+
+
 		switch kind {
 		case "deployment":
 			var deployment Deployment
@@ -91,6 +92,8 @@ func update(kind, directory string) error {
 			if err != nil {
 				return fmt.Errorf("Failed write file: %w", err)
 			}
+
+
 		case "rollout":
 
 			var rollout Rollout
