@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/razielt77/kyml/cmd/schema"
+	"github.com/razielt77/kyml/cmd/utils"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -24,11 +26,11 @@ var (
 var updateCmd = &cobra.Command{
 	Use: "update KIND [flags] PATH",
 	Short: "Update k8s resources yaml files",
-	Long: "Update k8s resources yaml files\n\nExample:\nkyml update deployment -n my_deployment -a image -v myimage:0.1 .\n",
+	Long: "Update k8s resources yaml files.\nCurrently supported resources are: deployment, rollout\n\nExample:\nkyml update deployment -n DEPLOYMENT_NAME -a image -v NEW_IMAGE_NAME:0.1 .\n",
 	Args: cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		err := update(args[0],args[1])
-		dieOnError("Failed to update", err)
+		utils.DieOnError(err)
 	},
 }
 
@@ -47,7 +49,9 @@ func init() {
 
 func update(kind, directory string) error {
 
-	return filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
+	updateMade := false
+
+	err := filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
 
 		if info.IsDir() {
 			return nil
@@ -71,58 +75,46 @@ func update(kind, directory string) error {
 			return nil
 		}
 
-
-
 		switch kind {
 		case "deployment":
-			var deployment Deployment
+			var deployment schema.Deployment
 			err = yaml.Unmarshal([]byte(yamlFile), &deployment)
 			if err != nil {
 				return fmt.Errorf("Failed to unmarshal: %w", err)
 			}
-			if updateCmdOptions.attribute == "image" {
-				fmt.Printf("Updating resource of kind: %s\tNamed: %s\tImage:%s ==> %s\n", deployment.Kind, deployment.Meta.Name, deployment.Spec.Template.Spec.Containers[updateCmdOptions.index].Image, updateCmdOptions.value)
-				deployment.Spec.Template.Spec.Containers[updateCmdOptions.index].Image = updateCmdOptions.value
+			err = deployment.Update(updateCmdOptions.attribute,updateCmdOptions.value,updateCmdOptions.index)
+			if err == nil{
+				updateMade = true
+				err = utils.MarshalAndSave(deployment,path)
 			}
-			data, err := yaml.Marshal(&deployment)
-			if err != nil {
-				return fmt.Errorf("Failed to marshal: %w", err)
-			}
-			err = ioutil.WriteFile(path, data, 0644)
-			if err != nil {
-				return fmt.Errorf("Failed write file: %w", err)
-			}
-
-
 		case "rollout":
 
-			var rollout Rollout
+			var rollout schema.Rollout
 			err = yaml.Unmarshal([]byte(yamlFile), &rollout)
 			if err != nil {
 				return fmt.Errorf("Failed to unmarshal: %w", err)
 			}
-			if updateCmdOptions.attribute == "image" {
-				fmt.Printf("Updating resource of kind: %s\tNamed: %s\tImage:%s ==> %s\n", rollout.Kind, rollout.Meta.Name, rollout.Spec.Template.Spec.Containers[updateCmdOptions.index].Image, updateCmdOptions.value)
-				rollout.Spec.Template.Spec.Containers[updateCmdOptions.index].Image = updateCmdOptions.value
-			}
-			data, err := yaml.Marshal(&rollout)
-			if err != nil {
-				return fmt.Errorf("Failed to marshal: %w", err)
-			}
-			err = ioutil.WriteFile(path, data, 0644)
-			if err != nil {
-				return fmt.Errorf("Failed write file: %w", err)
+			err = rollout.Update(updateCmdOptions.attribute,updateCmdOptions.value,updateCmdOptions.index)
+			if err == nil{
+				updateMade = true
+				err = utils.MarshalAndSave(rollout,path)
 			}
 		default:
 			return fmt.Errorf("Kind %s is not supported yet", kind)
 		}
-		return nil
+		utils.DieOnError(err)
+		return err
 	})
+
+	if !updateMade{
+		fmt.Println("No update made")
+	}
+	return err
 
 }
 
 func matchResource(txtKind, txtName string, data []byte) (bool, error) {
-	var base BaseInfo
+	var base schema.BaseInfo
 	err := yaml.Unmarshal(data, &base)
 	if err != nil {
 		return false, fmt.Errorf("Failed to unmarshal: %w", err)

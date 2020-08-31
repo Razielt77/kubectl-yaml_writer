@@ -1,4 +1,10 @@
-package cmd
+package schema
+
+import (
+	"errors"
+	"fmt"
+	"github.com/razielt77/kyml/cmd/utils"
+)
 
 type MetaData  struct {
 	Name string `yaml:"name"`
@@ -19,6 +25,7 @@ type BaseInfo struct {
 	Meta       MetaData `yaml:"metadata,omitempty"`
 }
 
+
 type Deployment struct {
 	ApiVersion string `yaml:"apiVersion"`
 	Kind       string `yaml:"kind"`
@@ -34,7 +41,7 @@ type Deployment struct {
 				Labels map[string]string `yaml:"labels"`
 			} `yaml:"metadata"`
 			Spec struct {
-				Containers []Container `yaml:"containers,omitempty"`
+				Containers *[]Container `yaml:"containers,omitempty"`
 			} `yaml:"spec"`
 		} `yaml:"template"`
 		MinReadySeconds int `yaml:"minReadySeconds,omitempty"`
@@ -56,16 +63,18 @@ type Rollout struct {
 				Labels map[string]string `yaml:"labels"`
 			} `yaml:"metadata"`
 			Spec struct {
-				Containers []Container `yaml:"containers,omitempty"`
+				Containers *[]Container `yaml:"containers,omitempty"`
 			} `yaml:"spec"`
 		} `yaml:"template"`
 		MinReadySeconds int `yaml:"minReadySeconds,omitempty"`
 		Strategy        struct {
-			Canary struct {
-				Steps []CanaryStep `yaml:"steps,omitempty"`
-			} `yaml:"canary,omitempty"`
+			CanarySteps *Canary `yaml:"canary,omitempty"`
 		} `yaml:"strategy"`
 	} `yaml:"spec"`
+}
+
+type Canary struct {
+	Steps []CanaryStep `yaml:"steps,omitempty"`
 }
 
 type CanaryStep struct {
@@ -81,4 +90,35 @@ type RolloutPause struct {
 	// Duration the amount of time to wait before moving to the next step.
 	// +optional
 	Duration *int `yaml:"duration,omitempty"`
+}
+func (dp *Deployment) Update(att,value string,index int) error{
+	var err error = nil
+	switch att{
+	case "image":
+		if (*dp.Spec.Template.Spec.Containers)[index].Image != value{
+			(*dp.Spec.Template.Spec.Containers)[index].Image = value
+		}else{
+			err = errors.New("value was already set")
+		}
+	default:
+		err = fmt.Errorf("attribute: %s is not supported", att)
+	}
+	utils.DieOnError(err)
+	return err
+}
+
+func (rl *Rollout) Update(att,value string,index int) error{
+	var err error = nil
+	switch att{
+	case "image":
+		if (*rl.Spec.Template.Spec.Containers)[index].Image != value{
+			(*rl.Spec.Template.Spec.Containers)[index].Image = value
+		}else{
+			err = errors.New("value was already set")
+		}
+	default:
+		err = fmt.Errorf("attribute: %s is not supported", att)
+	}
+	utils.DieOnError(err)
+	return err
 }
