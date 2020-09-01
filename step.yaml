@@ -83,6 +83,6 @@ spec:
       title: "Run Kyml"
       image: "docker.io/razielt/kyml:0.2"
       commands:
-        - kyml update ${{KIND}} -n ${{NAME}} -a ${{ATT}} -v ${{VALUE}} . > temp.txt
+        - kyml update ${{KIND}} -n ${{NAME}} -a ${{ATT}} -v ${{VALUE}} . > temp.txt && cat temp.txt
         - if [ ! -s temp.txt ]; then COMMIT_REQUIRED="true" ; else COMMIT_REQUIRED="false"; fi
         - echo COMMIT_REQUIRED=$COMMIT_REQUIRED >> /meta/env_vars_to_export

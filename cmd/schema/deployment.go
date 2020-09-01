@@ -1,9 +1,7 @@
 package schema
 
 import (
-	"errors"
 	"fmt"
-	"github.com/razielt77/kyml/cmd/utils"
 )
 
 type MetaData  struct {
@@ -98,12 +96,11 @@ func (dp *Deployment) Update(att,value string,index int) error{
 		if (*dp.Spec.Template.Spec.Containers)[index].Image != value{
 			(*dp.Spec.Template.Spec.Containers)[index].Image = value
 		}else{
-			err = errors.New("value was already set")
+			fmt.Printf("value was already set")
 		}
 	default:
 		err = fmt.Errorf("attribute: %s is not supported", att)
 	}
-	utils.DieOnError(err)
 	return err
 }
 
@@ -114,11 +111,10 @@ func (rl *Rollout) Update(att,value string,index int) error{
 		if (*rl.Spec.Template.Spec.Containers)[index].Image != value{
 			(*rl.Spec.Template.Spec.Containers)[index].Image = value
 		}else{
-			err = errors.New("value was already set")
+			fmt.Printf("value was already set")
 		}
 	default:
 		err = fmt.Errorf("attribute: %s is not supported", att)
 	}
-	utils.DieOnError(err)
 	return err
 }
