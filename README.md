@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/Razielt77/kyml/master/kyml.svg" width="200"
+<img src="https://raw.githubusercontent.com/Razielt77/kyml/master/kyml.svg" width="100"
   alt="Kyml logo"/>
 
 # Kyml
