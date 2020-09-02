@@ -9,12 +9,44 @@ type MetaData  struct {
 	Labels map[string]string `yaml:"labels,omitempty"`
 }
 
+func (m *MetaData)Init(name, app string){
+	m.Name = name
+	m.Labels = make(map[string]string)
+	m.Labels["app"]=app
+}
+
 type Container struct {
 	Image string `yaml:"image"`
 	Name  string `yaml:"name"`
-	Ports []struct {
-		ContainerPort int `yaml:"containerPort"`
-	} `yaml:"ports"`
+	Ports []ContainerPort `yaml:"ports"`
+}
+
+type ContainerPort struct {
+	ContPort int `yaml:"containerPort"`
+}
+
+func (c *Container) Init (image,name string, port int) {
+	c.Image = image
+	c.Name = name
+	c.Ports = append(c.Ports,ContainerPort{port})
+}
+
+type Selector struct {
+	MatchLabels map[string]string `yaml:"matchLabels"`
+}
+
+func (s *Selector)Init(app string){
+	s.MatchLabels = make(map[string]string)
+	s.MatchLabels["app"] = app
+}
+
+type TemplateMetadata struct {
+	Labels map[string]string `yaml:"labels"`
+}
+
+func (m *TemplateMetadata)Init(app string){
+	m.Labels = make(map[string]string)
+	m.Labels["app"] = app
 }
 
 type BaseInfo struct {
@@ -31,13 +63,9 @@ type Deployment struct {
 	Spec struct {
 		Replicas             int `yaml:"replicas"`
 		RevisionHistoryLimit int `yaml:"revisionHistoryLimit"`
-		Selector             struct {
-			MatchLabels map[string]string `yaml:"matchLabels"`
-		} `yaml:"selector"`
+		SelectorObj    *Selector `yaml:"selector,omitempty"`
 		Template struct {
-			Metadata struct {
-				Labels map[string]string `yaml:"labels"`
-			} `yaml:"metadata"`
+			MetadataObj *TemplateMetadata `yaml:"metadata,omitempty"`
 			Spec struct {
 				Containers *[]Container `yaml:"containers,omitempty"`
 			} `yaml:"spec"`
@@ -49,17 +77,13 @@ type Deployment struct {
 type Rollout struct {
 	ApiVersion string `yaml:"apiVersion"`
 	Kind       string `yaml:"kind"`
-	Meta       MetaData `yaml:"metadata",omitempty`
+	Meta       *MetaData `yaml:"metadata",omitempty`
 	Spec struct {
 		Replicas             int `yaml:"replicas"`
 		RevisionHistoryLimit int `yaml:"revisionHistoryLimit"`
-		Selector             struct {
-			MatchLabels map[string]string `yaml:"matchLabels"`
-		} `yaml:"selector"`
+		SelectorObj    *Selector `yaml:"selector,omitempty"`
 		Template struct {
-			Metadata struct {
-				Labels map[string]string `yaml:"labels"`
-			} `yaml:"metadata"`
+			MetadataObj *TemplateMetadata `yaml:"metadata,omitempty"`
 			Spec struct {
 				Containers *[]Container `yaml:"containers,omitempty"`
 			} `yaml:"spec"`
@@ -89,6 +113,23 @@ type RolloutPause struct {
 	// +optional
 	Duration *int `yaml:"duration,omitempty"`
 }
+
+func (dp *Deployment) Init(name,app,image string,replica,port int){
+	dp.ApiVersion = "apps/v1"
+	dp.Kind = "Deployment"
+	dp.Meta.Init(name,app)
+	dp.Spec.Replicas = replica
+	dp.Spec.RevisionHistoryLimit = 3
+	dp.Spec.SelectorObj = new(Selector)
+	dp.Spec.SelectorObj.Init(app)
+	dp.Spec.Template.MetadataObj = new(TemplateMetadata)
+	dp.Spec.Template.MetadataObj.Init(app)
+
+	dp.Spec.Template.Spec.Containers = new([]Container)
+	*dp.Spec.Template.Spec.Containers = append(*dp.Spec.Template.Spec.Containers,*new(Container))
+	(*dp.Spec.Template.Spec.Containers)[0].Init(image,name,port)
+}
+
 func (dp *Deployment) Update(att,value string,index int) error{
 	var err error = nil
 	switch att{
