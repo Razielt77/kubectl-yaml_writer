@@ -10,24 +10,26 @@ import (
 )
 
 var (
-	name string ="myapp_deployment"
+	name_deployment string ="myapp_deployment"
+	name_rollout string ="myapp_rollout"
 	app string ="my_app"
 	image string ="my_image:0.1"
 	replica int =2
 	port int =8080
-	path string ="temp.yaml"
+	path_deployment string ="temp_deployment.yaml"
+	path_rollout string ="temp_rollout.yaml"
 	new_image string ="my_image:0.2"
 )
 
 
 func TestUpdate(t *testing.T) {
 	var d schema.Deployment
-	d.Init(name,app,image,replica,port)
-	err := utils.MarshalAndSave(d,path)
+	d.Init(name_deployment,app,image,replica,port)
+	err := utils.MarshalAndSave(d,path_deployment)
 	if err != nil {
 		t.Errorf("Error saving, got: %s.", err)
 	}
-	updateCmdOptions.name = name
+	updateCmdOptions.name = name_deployment
 	updateCmdOptions.attribute = "image"
 	updateCmdOptions.value = new_image
 	updateCmdOptions.index = 0
@@ -36,7 +38,7 @@ func TestUpdate(t *testing.T) {
 		t.Errorf("Error uppdating file, error: %s.", err)
 	}
 
-	yamlFile, err := ioutil.ReadFile(path)
+	yamlFile, err := ioutil.ReadFile(path_deployment)
 	if err != nil {
 		t.Errorf("Failed to read file: %w", err)
 	}
@@ -48,8 +50,43 @@ func TestUpdate(t *testing.T) {
 	if (*deployment.Spec.Template.Spec.Containers)[0].Image != new_image{
 		t.Errorf("Update failed")
 	}
-	err = os.Remove(path)
+	err = os.Remove(path_deployment)
 	if err != nil {
-		t.Errorf("Failed to remove %s err: %w", path,err)
+		t.Errorf("Failed to remove %s err: %w", path_deployment,err)
+	}
+}
+
+
+func TestRollout(t *testing.T) {
+	var r schema.Rollout
+	r.Init(name_rollout,app,image,replica,port)
+	err := utils.MarshalAndSave(r,path_rollout)
+	if err != nil {
+		t.Errorf("Error saving, got: %s.", err)
+	}
+	updateCmdOptions.name = name_rollout
+	updateCmdOptions.attribute = "image"
+	updateCmdOptions.value = new_image
+	updateCmdOptions.index = 0
+	err = update("rollout",".")
+	if err != nil {
+		t.Errorf("Error uppdating file, error: %s.", err)
+	}
+
+	yamlFile, err := ioutil.ReadFile(path_rollout)
+	if err != nil {
+		t.Errorf("Failed to read file: %w", err)
+	}
+	var rollout schema.Rollout
+	err = yaml.Unmarshal([]byte(yamlFile), &rollout)
+	if err != nil {
+		t.Errorf("Failed to unmarshal: %w", err)
+	}
+	if (*rollout.Spec.Template.Spec.Containers)[0].Image != new_image{
+		t.Errorf("Update failed")
+	}
+	err = os.Remove(path_rollout)
+	if err != nil {
+		t.Errorf("Failed to remove %s err: %w", path_rollout,err)
 	}
 }

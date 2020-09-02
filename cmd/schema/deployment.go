@@ -77,7 +77,7 @@ type Deployment struct {
 type Rollout struct {
 	ApiVersion string `yaml:"apiVersion"`
 	Kind       string `yaml:"kind"`
-	Meta       *MetaData `yaml:"metadata",omitempty`
+	Meta       MetaData `yaml:"metadata",omitempty`
 	Spec struct {
 		Replicas             int `yaml:"replicas"`
 		RevisionHistoryLimit int `yaml:"revisionHistoryLimit"`
@@ -95,6 +95,30 @@ type Rollout struct {
 	} `yaml:"spec"`
 }
 
+
+func (r *Rollout) Init(name,app,image string,replica,port int){
+	r.ApiVersion = "apps/v1"
+	r.Kind = "Rollout"
+	r.Meta.Init(name,app)
+	r.Spec.Replicas = replica
+	r.Spec.RevisionHistoryLimit = 3
+	r.Spec.SelectorObj = new(Selector)
+	r.Spec.SelectorObj.Init(app)
+	r.Spec.Template.MetadataObj = new(TemplateMetadata)
+	r.Spec.Template.MetadataObj.Init(app)
+
+	r.Spec.Template.Spec.Containers = new([]Container)
+	*r.Spec.Template.Spec.Containers = append(*r.Spec.Template.Spec.Containers,*new(Container))
+	(*r.Spec.Template.Spec.Containers)[0].Init(image,name,port)
+	r.Spec.MinReadySeconds = 30
+	r.Spec.Strategy.CanarySteps = new(Canary)
+	r.Spec.Strategy.CanarySteps.Steps = append(r.Spec.Strategy.CanarySteps.Steps,CanaryStep{})
+	r.Spec.Strategy.CanarySteps.Steps[0].SetWeight = new(int32)
+	*r.Spec.Strategy.CanarySteps.Steps[0].SetWeight = 50
+	r.Spec.Strategy.CanarySteps.Steps = append(r.Spec.Strategy.CanarySteps.Steps,CanaryStep{})
+	(*r.Spec.Strategy.CanarySteps).Steps[1].Pause = new (RolloutPause)
+	//r.Spec.Strategy.CanarySteps.Steps
+}
 type Canary struct {
 	Steps []CanaryStep `yaml:"steps,omitempty"`
 }
@@ -145,6 +169,8 @@ func (dp *Deployment) Update(att,value string,index int) error{
 	return err
 }
 
+
+
 func (rl *Rollout) Update(att,value string,index int) error{
 	var err error = nil
 	switch att{
@@ -159,3 +185,5 @@ func (rl *Rollout) Update(att,value string,index int) error{
 	}
 	return err
 }
+
+
