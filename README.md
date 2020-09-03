@@ -2,6 +2,7 @@
   alt="Kyml logo"/>
 
 [![Codefresh build status]( https://g.codefresh.io/api/badges/pipeline/razielt77_github/Kyml%2Fci?type=cf-1&key=eyJhbGciOiJIUzI1NiJ9.NTY4MGYxMzAzNGNkYjMxNzdjODJhY2Ix.7GdEBSxLCA8HFs_SIUKUZiofLRqTMnAxV69g2uRYilk)]( https://g.codefresh.io/pipelines/edit/new/builds?id=5f4f27f269bd0e763e9f36de&pipeline=ci&projects=Kyml&projectId=5f4f27d3f8aad1818af6d365)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Razielt77/kyml)](https://goreportcard.com/report/github.com/Razielt77/kyml)
 # Kyml
 
 Kyml is a command line for easily creating and updating k8s yaml files (gitops)
