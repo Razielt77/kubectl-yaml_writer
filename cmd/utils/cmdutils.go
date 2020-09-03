@@ -2,9 +2,9 @@ package utils
 
 import (
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
-	"gopkg.in/yaml.v2"
 )
 
 func DieOnError(err error) {
@@ -14,7 +14,7 @@ func DieOnError(err error) {
 	}
 }
 
-func MarshalAndSave(in interface{}, path string) error{
+func MarshalAndSave(in interface{}, path string) error {
 	data, err := yaml.Marshal(&in)
 	if err == nil {
 		err = ioutil.WriteFile(path, data, 0644)

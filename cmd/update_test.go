@@ -3,29 +3,28 @@ package cmd
 import (
 	"github.com/razielt77/kyml/cmd/schema"
 	"github.com/razielt77/kyml/cmd/utils"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"testing"
-	"gopkg.in/yaml.v2"
 )
 
 var (
-	name_deployment string ="myapp_deployment"
-	name_rollout string ="myapp_rollout"
-	app string ="my_app"
-	image string ="my_image:0.1"
-	replica int =2
-	port int =8080
-	path_deployment string ="temp_deployment.yaml"
-	path_rollout string ="temp_rollout.yaml"
-	new_image string ="my_image:0.2"
+	name_deployment string = "myapp_deployment"
+	name_rollout    string = "myapp_rollout"
+	app             string = "my_app"
+	image           string = "my_image:0.1"
+	replica         int    = 2
+	port            int    = 8080
+	path_deployment string = "temp_deployment.yaml"
+	path_rollout    string = "temp_rollout.yaml"
+	new_image       string = "my_image:0.2"
 )
-
 
 func TestUpdate(t *testing.T) {
 	var d schema.Deployment
-	d.Init(name_deployment,app,image,replica,port)
-	err := utils.MarshalAndSave(d,path_deployment)
+	d.Init(name_deployment, app, image, replica, port)
+	err := utils.MarshalAndSave(d, path_deployment)
 	if err != nil {
 		t.Errorf("Error saving, got: %s.", err)
 	}
@@ -33,7 +32,7 @@ func TestUpdate(t *testing.T) {
 	updateCmdOptions.attribute = "image"
 	updateCmdOptions.value = new_image
 	updateCmdOptions.index = 0
-	err = update("deployment",".")
+	err = update("deployment", ".")
 	if err != nil {
 		t.Errorf("Error uppdating file, error: %s.", err)
 	}
@@ -47,20 +46,19 @@ func TestUpdate(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to unmarshal: %w", err)
 	}
-	if (*deployment.Spec.Template.Spec.Containers)[0].Image != new_image{
+	if (*deployment.Spec.Template.Spec.Containers)[0].Image != new_image {
 		t.Errorf("Update failed")
 	}
 	err = os.Remove(path_deployment)
 	if err != nil {
-		t.Errorf("Failed to remove %s err: %w", path_deployment,err)
+		t.Errorf("Failed to remove %s err: %w", path_deployment, err)
 	}
 }
 
-
 func TestRollout(t *testing.T) {
 	var r schema.Rollout
-	r.Init(name_rollout,app,image,replica,port)
-	err := utils.MarshalAndSave(r,path_rollout)
+	r.Init(name_rollout, app, image, replica, port)
+	err := utils.MarshalAndSave(r, path_rollout)
 	if err != nil {
 		t.Errorf("Error saving, got: %s.", err)
 	}
@@ -68,7 +66,7 @@ func TestRollout(t *testing.T) {
 	updateCmdOptions.attribute = "image"
 	updateCmdOptions.value = new_image
 	updateCmdOptions.index = 0
-	err = update("rollout",".")
+	err = update("rollout", ".")
 	if err != nil {
 		t.Errorf("Error uppdating file, error: %s.", err)
 	}
@@ -82,11 +80,11 @@ func TestRollout(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to unmarshal: %w", err)
 	}
-	if (*rollout.Spec.Template.Spec.Containers)[0].Image != new_image{
+	if (*rollout.Spec.Template.Spec.Containers)[0].Image != new_image {
 		t.Errorf("Update failed")
 	}
 	err = os.Remove(path_rollout)
 	if err != nil {
-		t.Errorf("Failed to remove %s err: %w", path_rollout,err)
+		t.Errorf("Failed to remove %s err: %w", path_rollout, err)
 	}
 }

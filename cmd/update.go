@@ -24,23 +24,22 @@ var (
 )
 
 var updateCmd = &cobra.Command{
-	Use: "update KIND [flags] PATH",
+	Use:   "update KIND [flags] PATH",
 	Short: "Update k8s resources yaml files",
-	Long: "Update k8s resources yaml files.\nCurrently supported resources are: deployment, rollout\n\nExample:\nkyml update deployment -n DEPLOYMENT_NAME -a image -v NEW_IMAGE_NAME:0.1 .\n",
-	Args: cobra.ExactArgs(2),
+	Long:  "Update k8s resources yaml files.\nCurrently supported resources are: deployment, rollout\n\nExample:\nkyml update deployment -n DEPLOYMENT_NAME -a image -v NEW_IMAGE_NAME:0.1 .\n",
+	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		err := update(args[0],args[1])
+		err := update(args[0], args[1])
 		utils.DieOnError(err)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(updateCmd)
-	updateCmd.Flags().StringVarP(&updateCmdOptions.name, "name", "n", "","Name of the resource to update. (Required)")
-	updateCmd.Flags().StringVarP(&updateCmdOptions.attribute, "att", "a", "","Name of the attribute to update. (Required)")
-	updateCmd.Flags().StringVarP(&updateCmdOptions.value, "value", "v", "","Desired value of the attribute to update. (Required)")
-	updateCmd.Flags().IntVarP(&updateCmdOptions.index, "index", "i",0, "In case attribute is in array, use index to specify the array index. (Optional)")
-
+	updateCmd.Flags().StringVarP(&updateCmdOptions.name, "name", "n", "", "Name of the resource to update. (Required)")
+	updateCmd.Flags().StringVarP(&updateCmdOptions.attribute, "att", "a", "", "Name of the attribute to update. (Required)")
+	updateCmd.Flags().StringVarP(&updateCmdOptions.value, "value", "v", "", "Desired value of the attribute to update. (Required)")
+	updateCmd.Flags().IntVarP(&updateCmdOptions.index, "index", "i", 0, "In case attribute is in array, use index to specify the array index. (Optional)")
 
 	updateCmd.MarkFlagRequired("name")
 	updateCmd.MarkFlagRequired("att")
@@ -82,10 +81,10 @@ func update(kind, directory string) error {
 			if err != nil {
 				return fmt.Errorf("Failed to unmarshal: %w", err)
 			}
-			err = deployment.Update(updateCmdOptions.attribute,updateCmdOptions.value,updateCmdOptions.index)
-			if err == nil{
+			err = deployment.Update(updateCmdOptions.attribute, updateCmdOptions.value, updateCmdOptions.index)
+			if err == nil {
 				updateMade = true
-				err = utils.MarshalAndSave(deployment,path)
+				err = utils.MarshalAndSave(deployment, path)
 			}
 		case "rollout":
 
@@ -94,10 +93,10 @@ func update(kind, directory string) error {
 			if err != nil {
 				return fmt.Errorf("Failed to unmarshal: %w", err)
 			}
-			err = rollout.Update(updateCmdOptions.attribute,updateCmdOptions.value,updateCmdOptions.index)
-			if err == nil{
+			err = rollout.Update(updateCmdOptions.attribute, updateCmdOptions.value, updateCmdOptions.index)
+			if err == nil {
 				updateMade = true
-				err = utils.MarshalAndSave(rollout,path)
+				err = utils.MarshalAndSave(rollout, path)
 			}
 		default:
 			return fmt.Errorf("Kind %s is not supported yet", kind)
@@ -106,7 +105,7 @@ func update(kind, directory string) error {
 		return err
 	})
 
-	if !updateMade{
+	if !updateMade {
 		fmt.Println("No update made")
 	}
 	return err
