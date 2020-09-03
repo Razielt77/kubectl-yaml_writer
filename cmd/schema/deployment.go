@@ -4,20 +4,20 @@ import (
 	"fmt"
 )
 
-type MetaData  struct {
-	Name string `yaml:"name"`
+type MetaData struct {
+	Name   string            `yaml:"name"`
 	Labels map[string]string `yaml:"labels,omitempty"`
 }
 
-func (m *MetaData)Init(name, app string){
+func (m *MetaData) Init(name, app string) {
 	m.Name = name
 	m.Labels = make(map[string]string)
-	m.Labels["app"]=app
+	m.Labels["app"] = app
 }
 
 type Container struct {
-	Image string `yaml:"image"`
-	Name  string `yaml:"name"`
+	Image string          `yaml:"image"`
+	Name  string          `yaml:"name"`
 	Ports []ContainerPort `yaml:"ports"`
 }
 
@@ -25,17 +25,17 @@ type ContainerPort struct {
 	ContPort int `yaml:"containerPort"`
 }
 
-func (c *Container) Init (image,name string, port int) {
+func (c *Container) Init(image, name string, port int) {
 	c.Image = image
 	c.Name = name
-	c.Ports = append(c.Ports,ContainerPort{port})
+	c.Ports = append(c.Ports, ContainerPort{port})
 }
 
 type Selector struct {
 	MatchLabels map[string]string `yaml:"matchLabels"`
 }
 
-func (s *Selector)Init(app string){
+func (s *Selector) Init(app string) {
 	s.MatchLabels = make(map[string]string)
 	s.MatchLabels["app"] = app
 }
@@ -44,29 +44,28 @@ type TemplateMetadata struct {
 	Labels map[string]string `yaml:"labels"`
 }
 
-func (m *TemplateMetadata)Init(app string){
+func (m *TemplateMetadata) Init(app string) {
 	m.Labels = make(map[string]string)
 	m.Labels["app"] = app
 }
 
 type BaseInfo struct {
-	ApiVersion string `yaml:"apiVersion"`
-	Kind       string `yaml:"kind"`
+	ApiVersion string   `yaml:"apiVersion"`
+	Kind       string   `yaml:"kind"`
 	Meta       MetaData `yaml:"metadata,omitempty"`
 }
 
-
 type Deployment struct {
-	ApiVersion string `yaml:"apiVersion"`
-	Kind       string `yaml:"kind"`
+	ApiVersion string   `yaml:"apiVersion"`
+	Kind       string   `yaml:"kind"`
 	Meta       MetaData `yaml:"metadata,omitempty"`
-	Spec struct {
-		Replicas             int `yaml:"replicas"`
-		RevisionHistoryLimit int `yaml:"revisionHistoryLimit"`
-		SelectorObj    *Selector `yaml:"selector,omitempty"`
-		Template struct {
+	Spec       struct {
+		Replicas             int       `yaml:"replicas"`
+		RevisionHistoryLimit int       `yaml:"revisionHistoryLimit"`
+		SelectorObj          *Selector `yaml:"selector,omitempty"`
+		Template             struct {
 			MetadataObj *TemplateMetadata `yaml:"metadata,omitempty"`
-			Spec struct {
+			Spec        struct {
 				Containers *[]Container `yaml:"containers,omitempty"`
 			} `yaml:"spec"`
 		} `yaml:"template"`
@@ -75,16 +74,16 @@ type Deployment struct {
 }
 
 type Rollout struct {
-	ApiVersion string `yaml:"apiVersion"`
-	Kind       string `yaml:"kind"`
+	ApiVersion string   `yaml:"apiVersion"`
+	Kind       string   `yaml:"kind"`
 	Meta       MetaData `yaml:"metadata",omitempty`
-	Spec struct {
-		Replicas             int `yaml:"replicas"`
-		RevisionHistoryLimit int `yaml:"revisionHistoryLimit"`
-		SelectorObj    *Selector `yaml:"selector,omitempty"`
-		Template struct {
+	Spec       struct {
+		Replicas             int       `yaml:"replicas"`
+		RevisionHistoryLimit int       `yaml:"revisionHistoryLimit"`
+		SelectorObj          *Selector `yaml:"selector,omitempty"`
+		Template             struct {
 			MetadataObj *TemplateMetadata `yaml:"metadata,omitempty"`
-			Spec struct {
+			Spec        struct {
 				Containers *[]Container `yaml:"containers,omitempty"`
 			} `yaml:"spec"`
 		} `yaml:"template"`
@@ -95,11 +94,10 @@ type Rollout struct {
 	} `yaml:"spec"`
 }
 
-
-func (r *Rollout) Init(name,app,image string,replica,port int){
+func (r *Rollout) Init(name, app, image string, replica, port int) {
 	r.ApiVersion = "apps/v1"
 	r.Kind = "Rollout"
-	r.Meta.Init(name,app)
+	r.Meta.Init(name, app)
 	r.Spec.Replicas = replica
 	r.Spec.RevisionHistoryLimit = 3
 	r.Spec.SelectorObj = new(Selector)
@@ -108,17 +106,18 @@ func (r *Rollout) Init(name,app,image string,replica,port int){
 	r.Spec.Template.MetadataObj.Init(app)
 
 	r.Spec.Template.Spec.Containers = new([]Container)
-	*r.Spec.Template.Spec.Containers = append(*r.Spec.Template.Spec.Containers,*new(Container))
-	(*r.Spec.Template.Spec.Containers)[0].Init(image,name,port)
+	*r.Spec.Template.Spec.Containers = append(*r.Spec.Template.Spec.Containers, *new(Container))
+	(*r.Spec.Template.Spec.Containers)[0].Init(image, name, port)
 	r.Spec.MinReadySeconds = 30
 	r.Spec.Strategy.CanarySteps = new(Canary)
-	r.Spec.Strategy.CanarySteps.Steps = append(r.Spec.Strategy.CanarySteps.Steps,CanaryStep{})
+	r.Spec.Strategy.CanarySteps.Steps = append(r.Spec.Strategy.CanarySteps.Steps, CanaryStep{})
 	r.Spec.Strategy.CanarySteps.Steps[0].SetWeight = new(int32)
 	*r.Spec.Strategy.CanarySteps.Steps[0].SetWeight = 50
-	r.Spec.Strategy.CanarySteps.Steps = append(r.Spec.Strategy.CanarySteps.Steps,CanaryStep{})
-	(*r.Spec.Strategy.CanarySteps).Steps[1].Pause = new (RolloutPause)
+	r.Spec.Strategy.CanarySteps.Steps = append(r.Spec.Strategy.CanarySteps.Steps, CanaryStep{})
+	(*r.Spec.Strategy.CanarySteps).Steps[1].Pause = new(RolloutPause)
 	//r.Spec.Strategy.CanarySteps.Steps
 }
+
 type Canary struct {
 	Steps []CanaryStep `yaml:"steps,omitempty"`
 }
@@ -138,10 +137,10 @@ type RolloutPause struct {
 	Duration *int `yaml:"duration,omitempty"`
 }
 
-func (dp *Deployment) Init(name,app,image string,replica,port int){
+func (dp *Deployment) Init(name, app, image string, replica, port int) {
 	dp.ApiVersion = "apps/v1"
 	dp.Kind = "Deployment"
-	dp.Meta.Init(name,app)
+	dp.Meta.Init(name, app)
 	dp.Spec.Replicas = replica
 	dp.Spec.RevisionHistoryLimit = 3
 	dp.Spec.SelectorObj = new(Selector)
@@ -150,17 +149,17 @@ func (dp *Deployment) Init(name,app,image string,replica,port int){
 	dp.Spec.Template.MetadataObj.Init(app)
 
 	dp.Spec.Template.Spec.Containers = new([]Container)
-	*dp.Spec.Template.Spec.Containers = append(*dp.Spec.Template.Spec.Containers,*new(Container))
-	(*dp.Spec.Template.Spec.Containers)[0].Init(image,name,port)
+	*dp.Spec.Template.Spec.Containers = append(*dp.Spec.Template.Spec.Containers, *new(Container))
+	(*dp.Spec.Template.Spec.Containers)[0].Init(image, name, port)
 }
 
-func (dp *Deployment) Update(att,value string,index int) error{
+func (dp *Deployment) Update(att, value string, index int) error {
 	var err error = nil
-	switch att{
+	switch att {
 	case "image":
-		if (*dp.Spec.Template.Spec.Containers)[index].Image != value{
+		if (*dp.Spec.Template.Spec.Containers)[index].Image != value {
 			(*dp.Spec.Template.Spec.Containers)[index].Image = value
-		}else{
+		} else {
 			fmt.Printf("value was already set")
 		}
 	default:
@@ -169,15 +168,13 @@ func (dp *Deployment) Update(att,value string,index int) error{
 	return err
 }
 
-
-
-func (rl *Rollout) Update(att,value string,index int) error{
+func (rl *Rollout) Update(att, value string, index int) error {
 	var err error = nil
-	switch att{
+	switch att {
 	case "image":
-		if (*rl.Spec.Template.Spec.Containers)[index].Image != value{
+		if (*rl.Spec.Template.Spec.Containers)[index].Image != value {
 			(*rl.Spec.Template.Spec.Containers)[index].Image = value
-		}else{
+		} else {
 			fmt.Printf("value was already set")
 		}
 	default:
@@ -185,5 +182,3 @@ func (rl *Rollout) Update(att,value string,index int) error{
 	}
 	return err
 }
-
-
