@@ -17,7 +17,7 @@ var (
 	replica         int    = 2
 	port            int    = 8080
 	path_deployment string = "temp_deployment.yaml"
-	path_service string = "temp_service.yaml"
+	path_service    string = "temp_service.yaml"
 	path_rollout    string = "temp_rollout.yaml"
 	new_image       string = "my_image:0.2"
 )

@@ -1,6 +1,5 @@
 package schema
 
-
 /*
 apiVersion: v1
 kind: Service
@@ -15,33 +14,31 @@ metadata:
     type: LoadBalancer
 */
 
-
-type Service struct{
+type Service struct {
 	ApiVersion string   `yaml:"apiVersion"`
 	Kind       string   `yaml:"kind"`
 	Meta       MetaData `yaml:"metadata,omitempty"`
-	Spec       struct{
+	Spec       struct {
 		Selector *map[string]string `yaml:"selector,omitempty"`
-		Ports  *[]Port 	`yaml:"ports,omitempty"`
-		Type 	*string `yaml:"type,omitempty"`
-	}`yaml:"spec,omitempty"`
+		Ports    *[]Port            `yaml:"ports,omitempty"`
+		Type     *string            `yaml:"type,omitempty"`
+	} `yaml:"spec,omitempty"`
 }
 
-type Port struct{
-	Protocol 	*string `yaml:"protocol,omitempty"`
-	Port 		*string `yaml:"port,omitempty"`
-	TargetPort 		*string `yaml:"targetport,omitempty"`
+type Port struct {
+	Protocol   *string `yaml:"protocol,omitempty"`
+	Port       *string `yaml:"port,omitempty"`
+	TargetPort *string `yaml:"targetport,omitempty"`
 }
 
-func (p *Port) Init(targetPort string){
-	p.Protocol = new (string)
+func (p *Port) Init(targetPort string) {
+	p.Protocol = new(string)
 	*p.Protocol = "TCP"
-	p.Port = new (string)
+	p.Port = new(string)
 	*p.Port = "8080"
-	p.TargetPort = new (string)
+	p.TargetPort = new(string)
 	*p.TargetPort = targetPort
 }
-
 
 func (s *Service) Init(name, app, targetPort string) {
 	s.ApiVersion = "apps/v1"
@@ -56,4 +53,3 @@ func (s *Service) Init(name, app, targetPort string) {
 	s.Spec.Type = new(string)
 	*s.Spec.Type = "LoadBalancer"
 }
-
