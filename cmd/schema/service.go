@@ -1,18 +1,5 @@
 package schema
 
-/*
-apiVersion: v1
-kind: Service
-metadata:
-  name: gitopsapp
-  spec:
-    ports:
-     - port: 80
-       targetPort: 3000
-    selector:
-      app: gitopsapp
-    type: LoadBalancer
-*/
 
 type Service struct {
 	ApiVersion string   `yaml:"apiVersion"`

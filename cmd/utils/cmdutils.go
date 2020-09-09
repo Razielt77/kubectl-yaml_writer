@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+//DieOnError prints an error message and exit the app with error 1
 func DieOnError(err error) {
 	if err != nil {
 		fmt.Printf("[ERROR] %s\n", err.Error())
@@ -14,6 +15,7 @@ func DieOnError(err error) {
 	}
 }
 
+//MarshalAndSave marshal and yaml object and save it in the file
 func MarshalAndSave(in interface{}, path string) error {
 	data, err := yaml.Marshal(&in)
 	if err == nil {
