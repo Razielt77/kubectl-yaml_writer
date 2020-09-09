@@ -31,25 +31,25 @@ type Port struct {
 	TargetPort *string `yaml:"targetport,omitempty"`
 }
 
-func (p *Port) Init(targetPort string) {
+func (p *Port) Init(targetPort, externalPort string) {
 	p.Protocol = new(string)
 	*p.Protocol = "TCP"
 	p.Port = new(string)
-	*p.Port = "8080"
+	*p.Port = externalPort
 	p.TargetPort = new(string)
 	*p.TargetPort = targetPort
 }
 
-func (s *Service) Init(name, app, targetPort string) {
+func (s *Service) Init(app, targetPort, externalPort string) {
 	s.ApiVersion = "apps/v1"
 	s.Kind = "Service"
-	s.Meta.Init(name, app)
+	s.Meta.Init(app+"_service", app)
 	s.Spec.Selector = new(map[string]string)
 	*s.Spec.Selector = make(map[string]string)
 	(*s.Spec.Selector)["app"] = app
 	s.Spec.Ports = new([]Port)
 	*s.Spec.Ports = append(*s.Spec.Ports, *new(Port))
-	(*s.Spec.Ports)[0].Init(targetPort)
+	(*s.Spec.Ports)[0].Init(targetPort, externalPort)
 	s.Spec.Type = new(string)
 	*s.Spec.Type = "LoadBalancer"
 }

@@ -107,7 +107,7 @@ func (r *Rollout) Init(name, app, image string, replica, port int) {
 
 	r.Spec.Template.Spec.Containers = new([]Container)
 	*r.Spec.Template.Spec.Containers = append(*r.Spec.Template.Spec.Containers, *new(Container))
-	(*r.Spec.Template.Spec.Containers)[0].Init(image, name, port)
+	(*r.Spec.Template.Spec.Containers)[0].Init(image, app, port)
 	r.Spec.MinReadySeconds = 30
 	r.Spec.Strategy.CanarySteps = new(Canary)
 	r.Spec.Strategy.CanarySteps.Steps = append(r.Spec.Strategy.CanarySteps.Steps, CanaryStep{})
@@ -150,7 +150,7 @@ func (dp *Deployment) Init(name, app, image string, replica, port int) {
 
 	dp.Spec.Template.Spec.Containers = new([]Container)
 	*dp.Spec.Template.Spec.Containers = append(*dp.Spec.Template.Spec.Containers, *new(Container))
-	(*dp.Spec.Template.Spec.Containers)[0].Init(image, name, port)
+	(*dp.Spec.Template.Spec.Containers)[0].Init(image, app, port)
 }
 
 func (dp *Deployment) Update(att, value string, index int) error {
