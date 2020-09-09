@@ -17,7 +17,7 @@ metadata:
 type Service struct {
 	ApiVersion string   `yaml:"apiVersion"`
 	Kind       string   `yaml:"kind"`
-	Meta       MetaData `yaml:"metadata,omitempty"`
+	Meta       metaData `yaml:"metadata,omitempty"`
 	Spec       struct {
 		Selector *map[string]string `yaml:"selector,omitempty"`
 		Ports    *[]Port            `yaml:"ports,omitempty"`

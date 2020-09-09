@@ -4,12 +4,12 @@ import (
 	"fmt"
 )
 
-type MetaData struct {
+type metaData struct {
 	Name   string            `yaml:"name"`
 	Labels map[string]string `yaml:"labels,omitempty"`
 }
 
-func (m *MetaData) Init(name, app string) {
+func (m *metaData) Init(name, app string) {
 	m.Name = name
 	m.Labels = make(map[string]string)
 	m.Labels["app"] = app
@@ -52,13 +52,13 @@ func (m *TemplateMetadata) Init(app string) {
 type BaseInfo struct {
 	ApiVersion string   `yaml:"apiVersion"`
 	Kind       string   `yaml:"kind"`
-	Meta       MetaData `yaml:"metadata,omitempty"`
+	Meta       metaData `yaml:"metadata,omitempty"`
 }
 
 type Deployment struct {
 	ApiVersion string   `yaml:"apiVersion"`
 	Kind       string   `yaml:"kind"`
-	Meta       MetaData `yaml:"metadata,omitempty"`
+	Meta       metaData `yaml:"metadata,omitempty"`
 	Spec       struct {
 		Replicas             int       `yaml:"replicas"`
 		RevisionHistoryLimit int       `yaml:"revisionHistoryLimit"`
@@ -76,7 +76,7 @@ type Deployment struct {
 type Rollout struct {
 	ApiVersion string   `yaml:"apiVersion"`
 	Kind       string   `yaml:"kind"`
-	Meta       MetaData `yaml:"metadata",omitempty`
+	Meta       metaData `yaml:"metadata",omitempty`
 	Spec       struct {
 		Replicas             int       `yaml:"replicas"`
 		RevisionHistoryLimit int       `yaml:"revisionHistoryLimit"`
