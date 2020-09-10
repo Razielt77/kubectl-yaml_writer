@@ -10,12 +10,19 @@ Kyml is a command line for easily creating and updating k8s yaml files (gitops)
 
 ## What does Kyml do?
 
-Kyml is a cli that makes it easy to update k8 resources (like deployments, services etc...) yaml files.
+Kyml is a cli that makes it easy to 
+1. Update k8 resources (like deployments, services etc...) yaml files.
+2. Create a simple k8 app (pair of a service and deployment) yaml files.
+
+## When will you use Kyml ?
+
 You can use kyml as part an automated cd pipeline to update your k8s manifest like in the flow below:
 - Clone your gitops repo
 - Use **kyml** to update your deployment entities with new docker images
 - Commit your updatet to your gitops repo
 - Call your gitops tool (Argo CD or any other). Alternatively you can configure your gitops to sync automatically when repo changes.
+
+Additionally, you can use **kyml** to create a simple functional pair of a service and deployment yaml files.
 
 ## Installation
 While we are still working on simple install for Mac you may run the kyml docker image [docker.io/razielt/kyml:0.2](https://hub.docker.com/repository/docker/razielt/kyml)
@@ -23,4 +30,8 @@ While we are still working on simple install for Mac you may run the kyml docker
 ## Documentation
 
 Run `kyml -h` to learn about **kyml** commands and options.
+
+## Issues / Enhancement Requests
+
+You can submit issues and enhancements request as issues in this repo.
 
