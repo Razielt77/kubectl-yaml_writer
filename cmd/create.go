@@ -41,7 +41,7 @@ func create(kind, directory string) error {
 
 	var err error = nil
 
-	var s Service
+	var s service
 	var d deployment
 
 	switch kind {

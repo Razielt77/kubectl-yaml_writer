@@ -89,7 +89,7 @@ type rollout struct {
 		} `yaml:"template"`
 		MinReadySeconds int `yaml:"minReadySeconds,omitempty"`
 		Strategy        struct {
-			CanarySteps *Canary `yaml:"canary,omitempty"`
+			CanarySteps *canary `yaml:"canary,omitempty"`
 		} `yaml:"strategy"`
 	} `yaml:"spec"`
 }
@@ -109,29 +109,29 @@ func (r *rollout) Init(name, app, image string, replica, port int) {
 	*r.Spec.Template.Spec.Containers = append(*r.Spec.Template.Spec.Containers, *new(container))
 	(*r.Spec.Template.Spec.Containers)[0].Init(image, app, port)
 	r.Spec.MinReadySeconds = 30
-	r.Spec.Strategy.CanarySteps = new(Canary)
-	r.Spec.Strategy.CanarySteps.Steps = append(r.Spec.Strategy.CanarySteps.Steps, CanaryStep{})
+	r.Spec.Strategy.CanarySteps = new(canary)
+	r.Spec.Strategy.CanarySteps.Steps = append(r.Spec.Strategy.CanarySteps.Steps, canaryStep{})
 	r.Spec.Strategy.CanarySteps.Steps[0].SetWeight = new(int32)
 	*r.Spec.Strategy.CanarySteps.Steps[0].SetWeight = 50
-	r.Spec.Strategy.CanarySteps.Steps = append(r.Spec.Strategy.CanarySteps.Steps, CanaryStep{})
-	(*r.Spec.Strategy.CanarySteps).Steps[1].Pause = new(RolloutPause)
+	r.Spec.Strategy.CanarySteps.Steps = append(r.Spec.Strategy.CanarySteps.Steps, canaryStep{})
+	(*r.Spec.Strategy.CanarySteps).Steps[1].Pause = new(rolloutPause)
 	//r.Spec.Strategy.CanarySteps.Steps
 }
 
-type Canary struct {
-	Steps []CanaryStep `yaml:"steps,omitempty"`
+type canary struct {
+	Steps []canaryStep `yaml:"steps,omitempty"`
 }
 
-type CanaryStep struct {
+type canaryStep struct {
 	// SetWeight sets what percentage of the newRS should receive
 	SetWeight *int32 `yaml:"setWeight,omitempty"`
 	// Pause freezes the rollout by setting spec.Paused to true.
 	// A Rollout will resume when spec.Paused is reset to false.
 	// +optional
-	Pause *RolloutPause `yaml:"pause,omitempty"`
+	Pause *rolloutPause `yaml:"pause,omitempty"`
 }
 
-type RolloutPause struct {
+type rolloutPause struct {
 	// Duration the amount of time to wait before moving to the next step.
 	// +optional
 	Duration *int `yaml:"duration,omitempty"`

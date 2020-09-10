@@ -10,10 +10,10 @@ import (
 var (
 	nameDeployment string = "myapp_deployment"
 	nameRollout    string = "myapp_rollout"
-	app             string = "my_app"
-	image           string = "my_image:0.1"
-	replica         int    = 2
-	port            int    = 8080
+	app            string = "my_app"
+	image          string = "my_image:0.1"
+	replica        int    = 2
+	portNumber     int    = 8080
 	pathDeployment string = "temp_deployment.yaml"
 	pathService    string = "temp_service.yaml"
 	pathRollout    string = "temp_rollout.yaml"
@@ -23,7 +23,7 @@ var (
 func TestUpdate(t *testing.T) {
 	var d deployment
 
-	d.Init(nameDeployment, app, image, replica, port)
+	d.Init(nameDeployment, app, image, replica, portNumber)
 	err := marshalAndSave(d, pathDeployment)
 	if err != nil {
 		t.Errorf("Error saving, got: %s.", err)
@@ -57,7 +57,7 @@ func TestUpdate(t *testing.T) {
 
 func TestRollout(t *testing.T) {
 	var r rollout
-	r.Init(nameRollout, app, image, replica, port)
+	r.Init(nameRollout, app, image, replica, portNumber)
 	err := marshalAndSave(r, pathRollout)
 	if err != nil {
 		t.Errorf("Error saving, got: %s.", err)
