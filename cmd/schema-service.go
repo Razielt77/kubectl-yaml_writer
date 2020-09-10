@@ -1,6 +1,5 @@
 package cmd
 
-
 type Service struct {
 	ApiVersion string   `yaml:"apiVersion"`
 	Kind       string   `yaml:"kind"`
