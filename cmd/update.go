@@ -111,7 +111,7 @@ func update(kind, directory string) error {
 }
 
 func matchResource(txtKind, txtName string, data []byte) (bool, error) {
-	var base BaseInfo
+	var base baseInfo
 	err := yaml.Unmarshal(data, &base)
 	if err != nil {
 		return false, fmt.Errorf("Failed to unmarshal: %w", err)

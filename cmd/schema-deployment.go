@@ -31,25 +31,25 @@ func (c *container) Init(image, name string, port int) {
 	c.Ports = append(c.Ports, containerPort{port})
 }
 
-type Selector struct {
+type selector struct {
 	MatchLabels map[string]string `yaml:"matchLabels"`
 }
 
-func (s *Selector) Init(app string) {
+func (s *selector) Init(app string) {
 	s.MatchLabels = make(map[string]string)
 	s.MatchLabels["app"] = app
 }
 
-type TemplateMetadata struct {
+type templateMetadata struct {
 	Labels map[string]string `yaml:"labels"`
 }
 
-func (m *TemplateMetadata) Init(app string) {
+func (m *templateMetadata) Init(app string) {
 	m.Labels = make(map[string]string)
 	m.Labels["app"] = app
 }
 
-type BaseInfo struct {
+type baseInfo struct {
 	ApiVersion string   `yaml:"apiVersion"`
 	Kind       string   `yaml:"kind"`
 	Meta       metaData `yaml:"metadata,omitempty"`
@@ -62,9 +62,9 @@ type deployment struct {
 	Spec       struct {
 		Replicas             int       `yaml:"replicas"`
 		RevisionHistoryLimit int       `yaml:"revisionHistoryLimit"`
-		SelectorObj          *Selector `yaml:"selector,omitempty"`
+		SelectorObj          *selector `yaml:"selector,omitempty"`
 		Template             struct {
-			MetadataObj *TemplateMetadata `yaml:"metadata,omitempty"`
+			MetadataObj *templateMetadata `yaml:"metadata,omitempty"`
 			Spec        struct {
 				Containers *[]container `yaml:"containers,omitempty"`
 			} `yaml:"spec"`
@@ -80,9 +80,9 @@ type rollout struct {
 	Spec       struct {
 		Replicas             int       `yaml:"replicas"`
 		RevisionHistoryLimit int       `yaml:"revisionHistoryLimit"`
-		SelectorObj          *Selector `yaml:"selector,omitempty"`
+		SelectorObj          *selector `yaml:"selector,omitempty"`
 		Template             struct {
-			MetadataObj *TemplateMetadata `yaml:"metadata,omitempty"`
+			MetadataObj *templateMetadata `yaml:"metadata,omitempty"`
 			Spec        struct {
 				Containers *[]container `yaml:"containers,omitempty"`
 			} `yaml:"spec"`
@@ -100,9 +100,9 @@ func (r *rollout) Init(name, app, image string, replica, port int) {
 	r.Meta.Init(name, app)
 	r.Spec.Replicas = replica
 	r.Spec.RevisionHistoryLimit = 3
-	r.Spec.SelectorObj = new(Selector)
+	r.Spec.SelectorObj = new(selector)
 	r.Spec.SelectorObj.Init(app)
-	r.Spec.Template.MetadataObj = new(TemplateMetadata)
+	r.Spec.Template.MetadataObj = new(templateMetadata)
 	r.Spec.Template.MetadataObj.Init(app)
 
 	r.Spec.Template.Spec.Containers = new([]container)
@@ -143,9 +143,9 @@ func (dp *deployment) Init(name, app, image string, replica, port int) {
 	dp.Meta.Init(name, app)
 	dp.Spec.Replicas = replica
 	dp.Spec.RevisionHistoryLimit = 3
-	dp.Spec.SelectorObj = new(Selector)
+	dp.Spec.SelectorObj = new(selector)
 	dp.Spec.SelectorObj.Init(app)
-	dp.Spec.Template.MetadataObj = new(TemplateMetadata)
+	dp.Spec.Template.MetadataObj = new(templateMetadata)
 	dp.Spec.Template.MetadataObj.Init(app)
 
 	dp.Spec.Template.Spec.Containers = new([]container)
