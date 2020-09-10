@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/razielt77/kyml/cmd/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +16,7 @@ var rootCmd = &cobra.Command{
 // Execute - execute the root command
 func Execute() {
 	err := rootCmd.Execute()
-	utils.DieOnError(err)
+	dieOnError(err)
 }
 
 func init() {

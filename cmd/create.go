@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/razielt77/kyml/cmd/schema"
-	"github.com/razielt77/kyml/cmd/utils"
 	"github.com/spf13/cobra"
 	"strconv"
 )
@@ -24,7 +22,7 @@ var createCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		err := create(args[0], args[1])
-		utils.DieOnError(err)
+		dieOnError(err)
 	},
 }
 
@@ -43,8 +41,8 @@ func create(kind, directory string) error {
 
 	var err error = nil
 
-	var service schema.Service
-	var deployment schema.Deployment
+	var service Service
+	var deployment Deployment
 
 	switch kind {
 	case "app":
@@ -53,13 +51,13 @@ func create(kind, directory string) error {
 		service.Init(createCmdOptions.name, targetPort, externalPort)
 		deployment.Init(createCmdOptions.name+"_deployment", createCmdOptions.name, createCmdOptions.image, 1, createCmdOptions.targetPort)
 		filename := directory + "/" + createCmdOptions.name + "_service.yaml"
-		err = utils.MarshalAndSave(service, filename)
+		err = marshalAndSave(service, filename)
 		if err != nil {
 			return fmt.Errorf("failed to save file %s: %w", filename, err)
 		}
 
 		filename = directory + "/" + createCmdOptions.name + "_deployment.yaml"
-		err = utils.MarshalAndSave(deployment, filename)
+		err = marshalAndSave(deployment, filename)
 		if err != nil {
 			return fmt.Errorf("failed to save file %s: %w", filename, err)
 		}

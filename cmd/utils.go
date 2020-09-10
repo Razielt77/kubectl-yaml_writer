@@ -1,4 +1,4 @@
-package utils
+package cmd
 
 import (
 	"fmt"
@@ -7,16 +7,14 @@ import (
 	"os"
 )
 
-//DieOnError prints an error message and exit the app with error 1
-func DieOnError(err error) {
+func dieOnError(err error) {
 	if err != nil {
 		fmt.Printf("[ERROR] %s\n", err.Error())
 		os.Exit(1)
 	}
 }
 
-//MarshalAndSave marshal and yaml object and save it in the file
-func MarshalAndSave(in interface{}, path string) error {
+func marshalAndSave(in interface{}, path string) error {
 	data, err := yaml.Marshal(&in)
 	if err == nil {
 		err = ioutil.WriteFile(path, data, 0644)

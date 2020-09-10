@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"github.com/razielt77/kyml/cmd/schema"
-	"github.com/razielt77/kyml/cmd/utils"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
@@ -23,10 +21,10 @@ var (
 )
 
 func TestUpdate(t *testing.T) {
-	var d schema.Deployment
+	var d Deployment
 
 	d.Init(name_deployment, app, image, replica, port)
-	err := utils.MarshalAndSave(d, path_deployment)
+	err := marshalAndSave(d, path_deployment)
 	if err != nil {
 		t.Errorf("Error saving, got: %s.", err)
 	}
@@ -43,7 +41,7 @@ func TestUpdate(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to read file: %w", err)
 	}
-	var deployment schema.Deployment
+	var deployment Deployment
 	err = yaml.Unmarshal([]byte(yamlFile), &deployment)
 	if err != nil {
 		t.Errorf("Failed to unmarshal: %w", err)
@@ -58,9 +56,9 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestRollout(t *testing.T) {
-	var r schema.Rollout
+	var r Rollout
 	r.Init(name_rollout, app, image, replica, port)
-	err := utils.MarshalAndSave(r, path_rollout)
+	err := marshalAndSave(r, path_rollout)
 	if err != nil {
 		t.Errorf("Error saving, got: %s.", err)
 	}
@@ -77,7 +75,7 @@ func TestRollout(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to read file: %w", err)
 	}
-	var rollout schema.Rollout
+	var rollout Rollout
 	err = yaml.Unmarshal([]byte(yamlFile), &rollout)
 	if err != nil {
 		t.Errorf("Failed to unmarshal: %w", err)

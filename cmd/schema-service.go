@@ -1,4 +1,4 @@
-package schema
+package cmd
 
 
 type Service struct {

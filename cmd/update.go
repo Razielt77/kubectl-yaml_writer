@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/razielt77/kyml/cmd/schema"
-	"github.com/razielt77/kyml/cmd/utils"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -30,7 +28,7 @@ var updateCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		err := update(args[0], args[1])
-		utils.DieOnError(err)
+		dieOnError(err)
 	},
 }
 
@@ -76,7 +74,7 @@ func update(kind, directory string) error {
 
 		switch kind {
 		case "deployment":
-			var deployment schema.Deployment
+			var deployment Deployment
 			err = yaml.Unmarshal([]byte(yamlFile), &deployment)
 			if err != nil {
 				return fmt.Errorf("Failed to unmarshal: %w", err)
@@ -84,11 +82,11 @@ func update(kind, directory string) error {
 			err = deployment.Update(updateCmdOptions.attribute, updateCmdOptions.value, updateCmdOptions.index)
 			if err == nil {
 				updateMade = true
-				err = utils.MarshalAndSave(deployment, path)
+				err = marshalAndSave(deployment, path)
 			}
 		case "rollout":
 
-			var rollout schema.Rollout
+			var rollout Rollout
 			err = yaml.Unmarshal([]byte(yamlFile), &rollout)
 			if err != nil {
 				return fmt.Errorf("Failed to unmarshal: %w", err)
@@ -96,12 +94,12 @@ func update(kind, directory string) error {
 			err = rollout.Update(updateCmdOptions.attribute, updateCmdOptions.value, updateCmdOptions.index)
 			if err == nil {
 				updateMade = true
-				err = utils.MarshalAndSave(rollout, path)
+				err = marshalAndSave(rollout, path)
 			}
 		default:
 			return fmt.Errorf("Kind %s is not supported yet", kind)
 		}
-		utils.DieOnError(err)
+		dieOnError(err)
 		return err
 	})
 
@@ -113,7 +111,7 @@ func update(kind, directory string) error {
 }
 
 func matchResource(txtKind, txtName string, data []byte) (bool, error) {
-	var base schema.BaseInfo
+	var base BaseInfo
 	err := yaml.Unmarshal(data, &base)
 	if err != nil {
 		return false, fmt.Errorf("Failed to unmarshal: %w", err)
