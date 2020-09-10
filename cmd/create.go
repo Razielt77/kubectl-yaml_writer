@@ -41,23 +41,23 @@ func create(kind, directory string) error {
 
 	var err error = nil
 
-	var service Service
-	var deployment Deployment
+	var s Service
+	var d deployment
 
 	switch kind {
 	case "app":
 		targetPort := strconv.Itoa(createCmdOptions.targetPort)
 		externalPort := strconv.Itoa(createCmdOptions.externalPort)
-		service.Init(createCmdOptions.name, targetPort, externalPort)
-		deployment.Init(createCmdOptions.name+"_deployment", createCmdOptions.name, createCmdOptions.image, 1, createCmdOptions.targetPort)
+		s.Init(createCmdOptions.name, targetPort, externalPort)
+		d.Init(createCmdOptions.name+"_deployment", createCmdOptions.name, createCmdOptions.image, 1, createCmdOptions.targetPort)
 		filename := directory + "/" + createCmdOptions.name + "_service.yaml"
-		err = marshalAndSave(service, filename)
+		err = marshalAndSave(s, filename)
 		if err != nil {
 			return fmt.Errorf("failed to save file %s: %w", filename, err)
 		}
 
 		filename = directory + "/" + createCmdOptions.name + "_deployment.yaml"
-		err = marshalAndSave(deployment, filename)
+		err = marshalAndSave(d, filename)
 		if err != nil {
 			return fmt.Errorf("failed to save file %s: %w", filename, err)
 		}

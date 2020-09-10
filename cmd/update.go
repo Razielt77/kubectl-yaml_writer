@@ -74,27 +74,27 @@ func update(kind, directory string) error {
 
 		switch kind {
 		case "deployment":
-			var deployment Deployment
-			err = yaml.Unmarshal([]byte(yamlFile), &deployment)
+			var d deployment
+			err = yaml.Unmarshal([]byte(yamlFile), &d)
 			if err != nil {
 				return fmt.Errorf("Failed to unmarshal: %w", err)
 			}
-			err = deployment.Update(updateCmdOptions.attribute, updateCmdOptions.value, updateCmdOptions.index)
+			err = d.Update(updateCmdOptions.attribute, updateCmdOptions.value, updateCmdOptions.index)
 			if err == nil {
 				updateMade = true
-				err = marshalAndSave(deployment, path)
+				err = marshalAndSave(d, path)
 			}
 		case "rollout":
 
-			var rollout Rollout
-			err = yaml.Unmarshal([]byte(yamlFile), &rollout)
+			var r rollout
+			err = yaml.Unmarshal([]byte(yamlFile), &r)
 			if err != nil {
 				return fmt.Errorf("Failed to unmarshal: %w", err)
 			}
-			err = rollout.Update(updateCmdOptions.attribute, updateCmdOptions.value, updateCmdOptions.index)
+			err = r.Update(updateCmdOptions.attribute, updateCmdOptions.value, updateCmdOptions.index)
 			if err == nil {
 				updateMade = true
-				err = marshalAndSave(rollout, path)
+				err = marshalAndSave(r, path)
 			}
 		default:
 			return fmt.Errorf("Kind %s is not supported yet", kind)

@@ -15,20 +15,20 @@ func (m *metaData) Init(name, app string) {
 	m.Labels["app"] = app
 }
 
-type Container struct {
+type container struct {
 	Image string          `yaml:"image"`
 	Name  string          `yaml:"name"`
-	Ports []ContainerPort `yaml:"ports"`
+	Ports []containerPort `yaml:"ports"`
 }
 
-type ContainerPort struct {
+type containerPort struct {
 	ContPort int `yaml:"containerPort"`
 }
 
-func (c *Container) Init(image, name string, port int) {
+func (c *container) Init(image, name string, port int) {
 	c.Image = image
 	c.Name = name
-	c.Ports = append(c.Ports, ContainerPort{port})
+	c.Ports = append(c.Ports, containerPort{port})
 }
 
 type Selector struct {
@@ -55,7 +55,7 @@ type BaseInfo struct {
 	Meta       metaData `yaml:"metadata,omitempty"`
 }
 
-type Deployment struct {
+type deployment struct {
 	ApiVersion string   `yaml:"apiVersion"`
 	Kind       string   `yaml:"kind"`
 	Meta       metaData `yaml:"metadata,omitempty"`
@@ -66,14 +66,14 @@ type Deployment struct {
 		Template             struct {
 			MetadataObj *TemplateMetadata `yaml:"metadata,omitempty"`
 			Spec        struct {
-				Containers *[]Container `yaml:"containers,omitempty"`
+				Containers *[]container `yaml:"containers,omitempty"`
 			} `yaml:"spec"`
 		} `yaml:"template"`
 		MinReadySeconds int `yaml:"minReadySeconds,omitempty"`
 	} `yaml:"spec"`
 }
 
-type Rollout struct {
+type rollout struct {
 	ApiVersion string   `yaml:"apiVersion"`
 	Kind       string   `yaml:"kind"`
 	Meta       metaData `yaml:"metadata",omitempty`
@@ -84,7 +84,7 @@ type Rollout struct {
 		Template             struct {
 			MetadataObj *TemplateMetadata `yaml:"metadata,omitempty"`
 			Spec        struct {
-				Containers *[]Container `yaml:"containers,omitempty"`
+				Containers *[]container `yaml:"containers,omitempty"`
 			} `yaml:"spec"`
 		} `yaml:"template"`
 		MinReadySeconds int `yaml:"minReadySeconds,omitempty"`
@@ -94,7 +94,7 @@ type Rollout struct {
 	} `yaml:"spec"`
 }
 
-func (r *Rollout) Init(name, app, image string, replica, port int) {
+func (r *rollout) Init(name, app, image string, replica, port int) {
 	r.ApiVersion = "apps/v1"
 	r.Kind = "Rollout"
 	r.Meta.Init(name, app)
@@ -105,8 +105,8 @@ func (r *Rollout) Init(name, app, image string, replica, port int) {
 	r.Spec.Template.MetadataObj = new(TemplateMetadata)
 	r.Spec.Template.MetadataObj.Init(app)
 
-	r.Spec.Template.Spec.Containers = new([]Container)
-	*r.Spec.Template.Spec.Containers = append(*r.Spec.Template.Spec.Containers, *new(Container))
+	r.Spec.Template.Spec.Containers = new([]container)
+	*r.Spec.Template.Spec.Containers = append(*r.Spec.Template.Spec.Containers, *new(container))
 	(*r.Spec.Template.Spec.Containers)[0].Init(image, app, port)
 	r.Spec.MinReadySeconds = 30
 	r.Spec.Strategy.CanarySteps = new(Canary)
@@ -137,7 +137,7 @@ type RolloutPause struct {
 	Duration *int `yaml:"duration,omitempty"`
 }
 
-func (dp *Deployment) Init(name, app, image string, replica, port int) {
+func (dp *deployment) Init(name, app, image string, replica, port int) {
 	dp.ApiVersion = "apps/v1"
 	dp.Kind = "Deployment"
 	dp.Meta.Init(name, app)
@@ -148,12 +148,12 @@ func (dp *Deployment) Init(name, app, image string, replica, port int) {
 	dp.Spec.Template.MetadataObj = new(TemplateMetadata)
 	dp.Spec.Template.MetadataObj.Init(app)
 
-	dp.Spec.Template.Spec.Containers = new([]Container)
-	*dp.Spec.Template.Spec.Containers = append(*dp.Spec.Template.Spec.Containers, *new(Container))
+	dp.Spec.Template.Spec.Containers = new([]container)
+	*dp.Spec.Template.Spec.Containers = append(*dp.Spec.Template.Spec.Containers, *new(container))
 	(*dp.Spec.Template.Spec.Containers)[0].Init(image, app, port)
 }
 
-func (dp *Deployment) Update(att, value string, index int) error {
+func (dp *deployment) Update(att, value string, index int) error {
 	var err error = nil
 	switch att {
 	case "image":
@@ -168,7 +168,7 @@ func (dp *Deployment) Update(att, value string, index int) error {
 	return err
 }
 
-func (rl *Rollout) Update(att, value string, index int) error {
+func (rl *rollout) Update(att, value string, index int) error {
 	var err error = nil
 	switch att {
 	case "image":

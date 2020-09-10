@@ -21,7 +21,7 @@ var (
 )
 
 func TestUpdate(t *testing.T) {
-	var d Deployment
+	var d deployment
 
 	d.Init(name_deployment, app, image, replica, port)
 	err := marshalAndSave(d, path_deployment)
@@ -41,12 +41,12 @@ func TestUpdate(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to read file: %w", err)
 	}
-	var deployment Deployment
-	err = yaml.Unmarshal([]byte(yamlFile), &deployment)
+	var dp deployment
+	err = yaml.Unmarshal([]byte(yamlFile), &dp)
 	if err != nil {
 		t.Errorf("Failed to unmarshal: %w", err)
 	}
-	if (*deployment.Spec.Template.Spec.Containers)[0].Image != new_image {
+	if (*dp.Spec.Template.Spec.Containers)[0].Image != new_image {
 		t.Errorf("Update failed")
 	}
 	err = os.Remove(path_deployment)
@@ -56,7 +56,7 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestRollout(t *testing.T) {
-	var r Rollout
+	var r rollout
 	r.Init(name_rollout, app, image, replica, port)
 	err := marshalAndSave(r, path_rollout)
 	if err != nil {
@@ -75,12 +75,12 @@ func TestRollout(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to read file: %w", err)
 	}
-	var rollout Rollout
-	err = yaml.Unmarshal([]byte(yamlFile), &rollout)
+	var ro rollout
+	err = yaml.Unmarshal([]byte(yamlFile), &ro)
 	if err != nil {
 		t.Errorf("Failed to unmarshal: %w", err)
 	}
-	if (*rollout.Spec.Template.Spec.Containers)[0].Image != new_image {
+	if (*ro.Spec.Template.Spec.Containers)[0].Image != new_image {
 		t.Errorf("Update failed")
 	}
 	err = os.Remove(path_rollout)
