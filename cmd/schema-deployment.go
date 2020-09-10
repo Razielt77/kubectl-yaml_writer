@@ -168,12 +168,12 @@ func (dp *deployment) Update(att, value string, index int) error {
 	return err
 }
 
-func (rl *rollout) Update(att, value string, index int) error {
+func (r *rollout) Update(att, value string, index int) error {
 	var err error = nil
 	switch att {
 	case "image":
-		if (*rl.Spec.Template.Spec.Containers)[index].Image != value {
-			(*rl.Spec.Template.Spec.Containers)[index].Image = value
+		if (*r.Spec.Template.Spec.Containers)[index].Image != value {
+			(*r.Spec.Template.Spec.Containers)[index].Image = value
 		} else {
 			fmt.Printf("value was already set")
 		}
