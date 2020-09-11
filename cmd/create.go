@@ -37,6 +37,13 @@ func init() {
 	createCmd.MarkFlagRequired("image")
 }
 
+func constructDeploymentFilename(directory, app string) string {
+	return directory + "/" + app + "_deployment.yaml"
+}
+func constructServiceFilename(directory, app string) string {
+	return directory + "/" + app + "_service.yaml"
+}
+
 func create(kind, directory string) error {
 
 	var err error = nil
@@ -50,13 +57,13 @@ func create(kind, directory string) error {
 		externalPort := strconv.Itoa(createCmdOptions.externalPort)
 		s.Init(createCmdOptions.name, targetPort, externalPort)
 		d.Init(createCmdOptions.name+"_deployment", createCmdOptions.name, createCmdOptions.image, 1, createCmdOptions.targetPort)
-		filename := directory + "/" + createCmdOptions.name + "_service.yaml"
+		filename := constructServiceFilename(directory, createCmdOptions.name)
 		err = marshalAndSave(s, filename)
 		if err != nil {
 			return fmt.Errorf("failed to save file %s: %w", filename, err)
 		}
 
-		filename = directory + "/" + createCmdOptions.name + "_deployment.yaml"
+		filename = constructDeploymentFilename(directory, createCmdOptions.name)
 		err = marshalAndSave(d, filename)
 		if err != nil {
 			return fmt.Errorf("failed to save file %s: %w", filename, err)

@@ -8,36 +8,35 @@ import (
 )
 
 var (
-	nameDeployment string = "myapp_deployment"
-	nameRollout    string = "myapp_rollout"
-	app            string = "my_app"
-	image          string = "my_image:0.1"
-	replica        int    = 2
-	portNumber     int    = 8080
-	pathDeployment string = "temp_deployment.yaml"
-	pathService    string = "temp_service.yaml"
-	pathRollout    string = "temp_rollout.yaml"
-	newImage       string = "my_image:0.2"
+	testDeploymentName string = "myapp_deployment"
+	testRolloutName    string = "myapp_rollout"
+	testApp            string = "my_app"
+	testImage          string = "my_image:0.1"
+	testReplica        int    = 2
+	testPortNumber     int    = 8080
+	testDeploymentPath string = "temp_deployment.yaml"
+	testRolloutPath    string = "temp_rollout.yaml"
+	testNewImage       string = "my_image:0.2"
 )
 
 func TestUpdate(t *testing.T) {
 	var d deployment
 
-	d.Init(nameDeployment, app, image, replica, portNumber)
-	err := marshalAndSave(d, pathDeployment)
+	d.Init(testDeploymentName, testApp, testImage, testReplica, testPortNumber)
+	err := marshalAndSave(d, testDeploymentPath)
 	if err != nil {
 		t.Errorf("Error saving, got: %s.", err)
 	}
-	updateCmdOptions.name = nameDeployment
+	updateCmdOptions.name = testDeploymentName
 	updateCmdOptions.attribute = "image"
-	updateCmdOptions.value = newImage
+	updateCmdOptions.value = testNewImage
 	updateCmdOptions.index = 0
 	err = update("deployment", ".")
 	if err != nil {
 		t.Errorf("Error uppdating file, error: %s.", err)
 	}
 
-	yamlFile, err := ioutil.ReadFile(pathDeployment)
+	yamlFile, err := ioutil.ReadFile(testDeploymentPath)
 	if err != nil {
 		t.Errorf("Failed to read file: %w", err)
 	}
@@ -46,32 +45,32 @@ func TestUpdate(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to unmarshal: %w", err)
 	}
-	if (*dp.Spec.Template.Spec.Containers)[0].Image != newImage {
+	if (*dp.Spec.Template.Spec.Containers)[0].Image != testNewImage {
 		t.Errorf("Update failed")
 	}
-	err = os.Remove(pathDeployment)
+	err = os.Remove(testDeploymentPath)
 	if err != nil {
-		t.Errorf("Failed to remove %s err: %w", pathDeployment, err)
+		t.Errorf("Failed to remove %s err: %w", testDeploymentPath, err)
 	}
 }
 
 func TestRollout(t *testing.T) {
 	var r rollout
-	r.Init(nameRollout, app, image, replica, portNumber)
-	err := marshalAndSave(r, pathRollout)
+	r.Init(testRolloutName, testApp, testImage, testReplica, testPortNumber)
+	err := marshalAndSave(r, testRolloutPath)
 	if err != nil {
 		t.Errorf("Error saving, got: %s.", err)
 	}
-	updateCmdOptions.name = nameRollout
+	updateCmdOptions.name = testRolloutName
 	updateCmdOptions.attribute = "image"
-	updateCmdOptions.value = newImage
+	updateCmdOptions.value = testNewImage
 	updateCmdOptions.index = 0
 	err = update("rollout", ".")
 	if err != nil {
 		t.Errorf("Error uppdating file, error: %s.", err)
 	}
 
-	yamlFile, err := ioutil.ReadFile(pathRollout)
+	yamlFile, err := ioutil.ReadFile(testRolloutPath)
 	if err != nil {
 		t.Errorf("Failed to read file: %w", err)
 	}
@@ -80,11 +79,11 @@ func TestRollout(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to unmarshal: %w", err)
 	}
-	if (*ro.Spec.Template.Spec.Containers)[0].Image != newImage {
+	if (*ro.Spec.Template.Spec.Containers)[0].Image != testNewImage {
 		t.Errorf("Update failed")
 	}
-	err = os.Remove(pathRollout)
+	err = os.Remove(testRolloutPath)
 	if err != nil {
-		t.Errorf("Failed to remove %s err: %w", pathRollout, err)
+		t.Errorf("Failed to remove %s err: %w", testRolloutPath, err)
 	}
 }
