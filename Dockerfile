@@ -1,6 +1,6 @@
 FROM alpine:latest
 WORKDIR /bin
-COPY kyml ./
+COPY kubectl-yaml_writer ./
 
 ENTRYPOINT ["sh"]
 
