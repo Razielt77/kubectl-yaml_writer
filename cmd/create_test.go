@@ -7,8 +7,6 @@ import (
 	"testing"
 )
 
-var ()
-
 func TestCreate(t *testing.T) {
 
 	directory := "."
