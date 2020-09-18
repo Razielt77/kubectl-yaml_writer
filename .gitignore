@@ -2,3 +2,4 @@
 kubectl-yaml_writer
 .DS_Store
 .vscode
+*.tar.gz

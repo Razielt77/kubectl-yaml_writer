@@ -3,45 +3,35 @@ kind: Plugin
 metadata:
   name: yaml-writer
 spec:
-  version: v0.4.0
-  homepage: https://github.com/ahmetb/kubectl-tree
-  shortDescription: Show a tree of object hierarchies through ownerReferences
+  version: v0.1.0
+  homepage: https://github.com/Razielt77/kubectl-yaml_writer
+  shortDescription: Easily update and create k8s yaml files
   description: |
-    This plugin shows sub-resources of a specified Kubernetes API object in a
-    tree view in the command-line. The parent-child relationship is discovered
-    using ownerReferences on the child object.
+    This plugin allows you to update k8s yaml files, it will search for tha file based
+    on resource kind and name and then will update an attribute and save the file.
+    It can use as a programatic way to update your gitops repo.
+    The plugin can also create a pair of service and deployment yaml files that can
+    be used as base files to build on
   caveats: |
-    * For resources that are not in default namespace, currently you must
-      specify -n/--namespace explicitly (the current namespace setting is not
-      yet used).
+    * currently it supports only updates for deployment and rollout kinds. please open an issue in the repo for any request
   platforms:
     - selector:
         matchLabels:
           os: darwin
-          arch: amd64
-      uri: https://github.com/ahmetb/kubectl-tree/releases/download/v0.4.0/kubectl-tree_v0.4.0_darwin_amd64.tar.gz
-      sha256: c90dd260212b7da7163f12a27269923dedaeb17667616d990aa7ddbee31d2364
+      uri: https://github.com/Razielt77/kubectl-yaml_writer/releases/download/v0.0.1/kubectl-yaml_writer_darwin.tar.gz
+      sha256: cb08263b19fb72fdf4939b610a7242aa71c482747db2351738096e1080665525
       files:
         - from: "*"
           to: "."
-      bin: kubectl-tree
+      bin: kubectl-yaml_writer
     - selector:
         matchLabels:
           os: linux
           arch: amd64
-      uri: https://github.com/ahmetb/kubectl-tree/releases/download/v0.4.0/kubectl-tree_v0.4.0_linux_amd64.tar.gz
-      sha256: 3253a981099abceb41f2ea32c89489fd1ba459d950becef2e302f79a8b2f0507
+      uri: https://github.com/Razielt77/kubectl-yaml_writer/releases/download/v0.0.1/kubectl-yaml_writer_linux.tar.gz
+      sha256: 6afea0e000d34dedd9d7aa8560b84294b339e6fc4c357a9d0770ca4b3db74d06
       files:
         - from: "*"
           to: "."
-      bin: kubectl-tree
-    - selector:
-        matchLabels:
-          os: windows
-          arch: amd64
-      uri: https://github.com/ahmetb/kubectl-tree/releases/download/v0.4.0/kubectl-tree_v0.4.0_windows_amd64.tar.gz
-      sha256: 8fe0fefe22816c3c34116f7b2e236bc351db053a839f7e2f396c7eaaf88e612c
-      files:
-        - from: "*"
-          to: "."
-      bin: kubectl-tree.exe
+      bin: kubectl-yaml_writer
+

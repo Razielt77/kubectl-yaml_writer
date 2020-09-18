@@ -18,7 +18,7 @@ var (
 var createCmd = &cobra.Command{
 	Use:   "create KIND [flags] PATH",
 	Short: "Create k8s resources yaml files",
-	Long:  "Create k8s resources yaml files.\nCurrently supported resources are: services & deployments\n\nExample:\nkyml create app -name APP_NAME -image IMAGE_NAME:0.1 -targetport CONTAINER_PORT_NUMBER -externalPort EXTERNAL_PORT.\n",
+	Long:  "Create k8s resources yaml files.\nCurrently supported resources are: services & deployments\n\nExample:\nkubectl yaml-writer create app -name APP_NAME -image IMAGE_NAME:0.1 -targetport CONTAINER_PORT_NUMBER -externalPort EXTERNAL_PORT.\n",
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		err := create(args[0], args[1])

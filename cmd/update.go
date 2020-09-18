@@ -24,7 +24,7 @@ var (
 var updateCmd = &cobra.Command{
 	Use:   "update KIND [flags] PATH",
 	Short: "Update k8s resources yaml files",
-	Long:  "Update k8s resources yaml files.\nCurrently supported resources are: deployment, rollout\n\nExample:\nkyml update deployment -n DEPLOYMENT_NAME -a image -v NEW_IMAGE_NAME:0.1 .\n",
+	Long:  "Update k8s resources yaml files.\nCurrently supported resources are: deployment, rollout\n\nExample:\nkubectl yaml-writer update deployment -n DEPLOYMENT_NAME -a image -v NEW_IMAGE_NAME:0.1 .\n",
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		err := update(args[0], args[1])
