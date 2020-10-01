@@ -12,8 +12,18 @@ package:
 	CGO_ENABLED=0 GOOS=darwin go build -o ./kubectl-yaml_writer *.go
 	tar -czf kubectl-yaml_writer_darwin.tar.gz kubectl-yaml_writer
 
+packagedarwin:
+	CGO_ENABLED=0 GOOS=darwin go build -o ./kubectl-yaml_writer *.go
+	mkdir temp
+	mv ./kubectl-yaml_writer ./temp/
+	cp ./LICENSE ./temp/
+	cd ./temp && tar -czf kubectl-yaml_writer_darwin.tar.gz ./
+
 darwin:
 	CGO_ENABLED=0 GOOS=darwin go build -o ./kubectl-yaml_writer *.go
 
 linux:
 	CGO_ENABLED=0 GOOS=linux go build -o ./kubectl-yaml_writer *.go
+
+clean:
+	rm kubectl-yaml_writer *.tar.gz
