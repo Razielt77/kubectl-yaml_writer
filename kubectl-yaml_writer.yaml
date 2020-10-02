@@ -18,20 +18,14 @@ spec:
     - selector:
         matchLabels:
           os: darwin
-      uri: https://github.com/Razielt77/kubectl-yaml_writer/releases/download/v0.0.1/kubectl-yaml_writer_darwin.tar.gz
-      sha256: cb08263b19fb72fdf4939b610a7242aa71c482747db2351738096e1080665525
-      files:
-        - from: "*"
-          to: "."
+      uri: https://github.com/Razielt77/kubectl-yaml_writer/releases/download/v0.0.2/kubectl-yaml_writer_darwin.tar.gz
+      sha256: 2569a5e58f6130619295627dda6bfd211fae3744f78b202a4b50b06c45e72e85
       bin: kubectl-yaml_writer
     - selector:
         matchLabels:
           os: linux
           arch: amd64
-      uri: https://github.com/Razielt77/kubectl-yaml_writer/releases/download/v0.0.1/kubectl-yaml_writer_linux.tar.gz
-      sha256: 6afea0e000d34dedd9d7aa8560b84294b339e6fc4c357a9d0770ca4b3db74d06
-      files:
-        - from: "*"
-          to: "."
+      uri: https://github.com/Razielt77/kubectl-yaml_writer/releases/download/v0.0.2/kubectl-yaml_writer_linux.tar.gz
+      sha256: defda1c5f07e5d3b97e748e6bea81739560350c387238ce1160b4d7b17222220
       bin: kubectl-yaml_writer
 

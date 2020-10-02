@@ -17,7 +17,16 @@ packagedarwin:
 	mkdir temp
 	mv ./kubectl-yaml_writer ./temp/
 	cp ./LICENSE ./temp/
-	cd ./temp && tar -czf kubectl-yaml_writer_darwin.tar.gz ./
+	cd ./temp && tar -czf ../kubectl-yaml_writer_darwin.tar.gz ./
+	rm -rf temp
+
+packagelinux:
+	CGO_ENABLED=0 GOOS=linux go build -o ./kubectl-yaml_writer *.go
+	mkdir temp
+	mv ./kubectl-yaml_writer ./temp/
+	cp ./LICENSE ./temp/
+	cd ./temp && tar -czf ../kubectl-yaml_writer_linux.tar.gz ./
+	rm -rf temp
 
 darwin:
 	CGO_ENABLED=0 GOOS=darwin go build -o ./kubectl-yaml_writer *.go
